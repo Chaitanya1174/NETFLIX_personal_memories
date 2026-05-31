@@ -72,7 +72,7 @@
 
         /* --- SCREEN: BROWSE DASHBOARD --- */
         #browse-screen {
-            display: none; /* Hidden by default */
+            display: none;
             padding: 20px 40px;
         }
 
@@ -88,6 +88,22 @@
             font-size: 2rem;
             font-weight: bold;
             cursor: pointer;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .switch-profile-btn {
+            cursor: pointer;
+            color: #b0b0b0;
+            transition: color 0.3s;
+        }
+        
+        .switch-profile-btn:hover {
+            color: white;
         }
 
         /* --- FEATURED/HERO SECTION --- */
@@ -133,8 +149,8 @@
         }
 
         .watch-now-btn {
-            background-color: #E50914;
-            color: white;
+            background-color: white;
+            color: black;
             border: none;
             padding: 12px 40px;
             font-size: 1.1rem;
@@ -145,9 +161,10 @@
         }
 
         .watch-now-btn:hover {
-            background-color: #c90812;
+            background-color: #e6e6e6;
         }
 
+        /* --- ROW STYLES --- */
         .row-title {
             font-size: 1.4rem;
             margin-bottom: 10px;
@@ -160,9 +177,9 @@
             overflow-x: auto;
             padding: 20px;
             padding-bottom: 40px;
+            scroll-behavior: smooth;
         }
 
-        /* Hide scrollbar for a cleaner look */
         .video-row::-webkit-scrollbar {
             display: none;
         }
@@ -174,6 +191,7 @@
             border-radius: 4px;
             transition: transform 0.3s ease;
             position: relative;
+            background-color: #222;
         }
 
         .thumbnail img {
@@ -192,6 +210,7 @@
             object-fit: cover;
             border-radius: 4px;
             display: none;
+            background-color: #000;
         }
 
         .thumbnail-title {
@@ -201,8 +220,8 @@
             right: 0;
             padding: 30px 10px 10px 10px;
             background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 100%);
-            color: #b0b0b0;
-            font-size: 0.85rem;
+            color: white;
+            font-size: 0.9rem;
             font-weight: 500;
             border-radius: 0 0 4px 4px;
             overflow: hidden;
@@ -215,7 +234,6 @@
             z-index: 10;
         }
 
-        /* --- SCROLL INDICATOR --- */
         .scroll-indicator {
             display: none;
             position: absolute;
@@ -237,391 +255,206 @@
         .scroll-indicator:hover {
             color: white;
         }
-
         .scroll-indicator.show {
             display: block;
         }
-
         .row-container {
             position: relative;
         }
 
         /* --- SCREEN: VIDEO PLAYER --- */
         #player-screen {
-            display: none; /* Hidden by default */
+            display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background-color: black;
             z-index: 100;
         }
 
         .back-btn {
             position: absolute;
-            top: 20px;
-            left: 20px;
+            top: 20px; left: 20px;
             color: white;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             cursor: pointer;
             z-index: 101;
             background: rgba(0, 0, 0, 0.5);
-            padding: 10px 15px;
+            padding: 10px 20px;
             border-radius: 5px;
-            border: none;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: background 0.3s;
         }
 
         .back-btn:hover {
             background: rgba(229, 9, 20, 0.8);
+            border-color: transparent;
         }
 
-        video {
-            width: 100%;
-            height: 100%;
-            outline: none;
-        }
+        video { width: 100%; height: 100%; outline: none; }
+        .video-fade-out { opacity: 0; transition: none; }
+        .video-fade-in { opacity: 1; transition: opacity 1.5s ease-in; }
 
         /* --- INTRO SCREEN --- */
         #intro-screen {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; height: 100vh;
             background-color: #000;
-            position: fixed;
-            top: 0;
-            left: 0;
+            position: fixed; top: 0; left: 0;
             z-index: 1000;
         }
+        #intro-video { width: 100%; height: 100%; object-fit: contain; background-color: #000; }
 
-        #intro-video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            background-color: #000;
-        }
-
-        /* Pop-in animation for profiles */
         @keyframes popIn {
-            0% {
-                opacity: 0;
-                transform: scale(0.5);
-            }
-            50% {
-                opacity: 0.8;
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
+            0% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; transform: scale(1); }
         }
-
-        .profile.pop-in {
-            animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
+        .profile.pop-in { animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
     </style>
 </head>
 <body>
 
-    <!-- Intro Screen with Netflix Logo Animation -->
+    <!-- Intro Screen -->
     <div id="intro-screen">
         <video id="intro-video" autoplay muted preload="auto">
             <source src="media/vidssave.com Netflix New Logo Animation 2019 360P.mp4" type="video/mp4">
         </video>
     </div>
 
+    <!-- Profile Selection Screen -->
     <div id="profile-screen">
         <h1>Who's watching?</h1>
         <div class="profiles-container">
-            
             <div class="profile" onclick="enterDashboard('Sonu')">
-                <img class="profile-img" src="https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.jpg" alt="Profile 1">
+                <img class="profile-img" src="https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.jpg" alt="Sonu">
                 <div class="profile-name">Sonu</div>
             </div>
-
             <div class="profile" onclick="enterDashboard('Aadu')" style="animation-delay: 0.2s;">
-                <img class="profile-img" src="https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-88wkdmjrorckekha.jpg" alt="Profile 2">
+                <img class="profile-img" src="https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-88wkdmjrorckekha.jpg" alt="Aadu">
                 <div class="profile-name">Aadu</div>
             </div>
-
             <div class="profile" onclick="enterDashboard('US')" style="animation-delay: 0.4s;">
-                <img class="profile-img" src="https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-88wkdmjrorckekha.jpg" alt="Profile 3">
+                <img class="profile-img" src="https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-88wkdmjrorckekha.jpg" alt="US">
                 <div class="profile-name">US</div>
             </div>
-
         </div>
     </div>
 
+    <!-- Main Browse Dashboard -->
     <div id="browse-screen">
         <div class="navbar">
             <div class="logo">NETFLIX</div>
-            <div>
-                <span id="current-user-display" style="margin-right: 20px;"></span>
-                <span style="cursor: pointer;" onclick="logout()">Switch Profile</span>
+            <div class="nav-actions">
+                <span id="current-user-display" style="font-weight: bold;"></span>
+                <span class="switch-profile-btn" onclick="logout()">Switch Profile</span>
             </div>
         </div>
-
 
         <!-- * Sonu's Content -->
         <div id="sonu-content" style="display: none;">
-        <!-- Featured Section for Sonu -->
-        <div class="featured-section" id="sonu-featured">
-            <video class="featured-video" id="sonu-featured-video" muted autoplay loop>
-                <source src="" type="video/mp4">
-            </video>
-            <div class="featured-content">
-                <div class="featured-title" id="sonu-featured-title">Featured Video</div>
-                <div class="featured-description" id="sonu-featured-desc">Watch this amazing video</div>
-                <button class="watch-now-btn" onclick="playFeaturedVideo('sonu')">Watch Now</button>
-            </div>
-        </div>
-
-        <h2 class="row-title">My Favorites</h2>
-        <div class="row-container">
-            <div class="scroll-indicator">→</div>
-            <div class="video-row">
-                
-                <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_1.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_1.mp4">
-                    <img src="https://images.unsplash.com/photo-1506744626753-eda8183248c8?w=500" alt="Thumbnail 1">
-                    <video class="thumbnail-preview"></video>
-                    <div class="thumbnail-title">Sonu Favorite 1</div>
+            <div class="featured-section" id="sonu-featured">
+                <video class="featured-video" id="sonu-featured-video" muted autoplay loop></video>
+                <div class="featured-content">
+                    <div class="featured-title" id="sonu-featured-title">Featured Video</div>
+                    <div class="featured-description" id="sonu-featured-desc">Watch this amazing video</div>
+                    <button class="watch-now-btn" onclick="playFeaturedVideo('sonu')">▶ Play</button>
                 </div>
-                
-                <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_2.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_2.mp4">
-                    <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=500" alt="Thumbnail 2">
-                    <video class="thumbnail-preview"></video>
-                    <div class="thumbnail-title">Video Title 2</div>
-                </div>
-                
-                <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_2.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_2.mp4">
-                    <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=500" alt="Thumbnail 2">
-                    <video class="thumbnail-preview"></video>
-                    <div class="thumbnail-title">Video Title 3</div>
-                </div>
-                
-                <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_2.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_2.mp4">
-                    <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=500" alt="Thumbnail 2">
-                    <video class="thumbnail-preview"></video>
-                    <div class="thumbnail-title">Video Title 4</div>
-                </div>
-                
-                <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_2.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_2.mp4">
-                    <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=500" alt="Thumbnail 2">
-                    <video class="thumbnail-preview"></video>
-                    <div class="thumbnail-title">Video Title 5</div>
-                </div>
-                
-            </div>
-        </div>
-        
-        <h2 class="row-title">Sonu's Picks</h2>
-        <div class="row-container">
-            <div class="scroll-indicator">→</div>
-            <div class="video-row">
-            
-            <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_3.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_3.mp4">
-                <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500" alt="Thumbnail 3">
-                <video class="thumbnail-preview"></video>
-                <div class="thumbnail-title">Sonu Pick 1</div>
             </div>
 
-            <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_4.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_4.mp4">
-                <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500" alt="Thumbnail 4">
-                <video class="thumbnail-preview"></video>
-                <div class="thumbnail-title">Sonu Pick 2</div>
+            <!-- Dynamic Added Videos Row (From Google Sheets) -->
+            <div id="sonu-sheet-section" style="display: none;">
+                <h2 class="row-title">Recently Added Memories</h2>
+                <div class="row-container">
+                    <div class="scroll-indicator">→</div>
+                    <div class="video-row" id="sonu-sheet-row"></div>
+                </div>
             </div>
 
-            <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_4.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_4.mp4">
-                <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500" alt="Thumbnail 4">
-                <video class="thumbnail-preview"></video>
-                <div class="thumbnail-title">Sonu Pick 3</div>
+            <!-- Static Row Fallback -->
+            <h2 class="row-title">My Favorites</h2>
+            <div class="row-container">
+                <div class="scroll-indicator">→</div>
+                <div class="video-row">
+                    <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_1.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_1.mp4">
+                        <img src="https://images.unsplash.com/photo-1506744626753-eda8183248c8?w=500" alt="Thumbnail">
+                        <video class="thumbnail-preview" muted playsinline loop></video>
+                        <div class="thumbnail-title">Sonu Favorite 1</div>
+                    </div>
+                </div>
             </div>
-
-            <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_4.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_4.mp4">
-                <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500" alt="Thumbnail 4">
-                <video class="thumbnail-preview"></video>
-                <div class="thumbnail-title">Sonu Pick 4</div>
-            </div>
-
-            </div>
-        </div>
         </div>
 
         <!-- * Aadu's Content -->
         <div id="aadu-content" style="display: none;">
-        <!-- Featured Section for Aadu -->
-        <div class="featured-section" id="aadu-featured">
-            <video class="featured-video" id="aadu-featured-video" muted autoplay loop>
-                <source src="" type="video/mp4">
-            </video>
-            <div class="featured-content">
-                <div class="featured-title" id="aadu-featured-title">Featured Video</div>
-                <div class="featured-description" id="aadu-featured-desc">Watch this amazing video</div>
-                <button class="watch-now-btn" onclick="playFeaturedVideo('aadu')">Watch Now</button>
-            </div>
-        </div>
-
-        <h2 class="row-title">Recent Memories</h2>
-        <div class="row-container">
-            <div class="scroll-indicator">→</div>
-            <div class="video-row">
-                
-                <div class="thumbnail" onclick="playVideo('media/Aadu_Dance_DIY_Club_Final.mp3.mov')" data-previewUrl="media/Aadu_Dance_DIY_Club_Final.mp3.mov">
-                    <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=500" alt="Thumbnail 1">
-                    <video class="thumbnail-preview"></video>
-                    <div class="thumbnail-title">Aadu Dance DIY Club</div>
+            <div class="featured-section" id="aadu-featured">
+                <video class="featured-video" id="aadu-featured-video" muted autoplay loop></video>
+                <div class="featured-content">
+                    <div class="featured-title" id="aadu-featured-title">Featured Video</div>
+                    <div class="featured-description" id="aadu-featured-desc">Watch this amazing video</div>
+                    <button class="watch-now-btn" onclick="playFeaturedVideo('aadu')">▶ Play</button>
                 </div>
-                
-                <div class="thumbnail" onclick="playVideo('media/Aadu_Chandrachooda.mp4')" data-previewUrl="media/Aadu_Chandrachooda.mp4">
-                    <img src="media/vlcsnap-2026-05-31-08h34m27s814.png" alt="Thumbnail 2">
-                    <video class="thumbnail-preview"></video>
-                    <div class="thumbnail-title">Aadu Memory 2</div>
-                </div>
-                
-                <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_2.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_2.mp4">
-                    <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=500" alt="Thumbnail 2">
-                    <video class="thumbnail-preview"></video>
-                    <div class="thumbnail-title">Aadu Memory 3</div>
-                </div>
-                
-                <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_2.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_2.mp4">
-                    <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=500" alt="Thumbnail 2">
-                    <video class="thumbnail-preview"></video>
-                    <div class="thumbnail-title">Aadu Memory 4</div>
-                </div>
-                
-                <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_2.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_2.mp4">
-                    <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=500" alt="Thumbnail 2">
-                    <video class="thumbnail-preview"></video>
-                    <div class="thumbnail-title">Aadu Memory 5</div>
-                </div>
-                
-            </div>
-        </div>
-        
-        <h2 class="row-title">Clay Modeling Projects</h2>
-        <div class="row-container">
-            <div class="scroll-indicator">→</div>
-            <div class="video-row">
-            
-            <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_3.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_3.mp4">
-                <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500" alt="Thumbnail 3">
-                <video class="thumbnail-preview"></video>
-                <div class="thumbnail-title">Clay Project 1</div>
             </div>
 
-            <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_4.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_4.mp4">
-                <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500" alt="Thumbnail 4">
-                <video class="thumbnail-preview"></video>
-                <div class="thumbnail-title">Clay Project 2</div>
+            <!-- Dynamic Added Videos Row (From Google Sheets) -->
+            <div id="aadu-sheet-section" style="display: none;">
+                <h2 class="row-title">Recently Added Memories</h2>
+                <div class="row-container">
+                    <div class="scroll-indicator">→</div>
+                    <div class="video-row" id="aadu-sheet-row"></div>
+                </div>
             </div>
 
-            <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_4.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_4.mp4">
-                <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500" alt="Thumbnail 4">
-                <video class="thumbnail-preview"></video>
-                <div class="thumbnail-title">Clay Project 3</div>
+            <h2 class="row-title">Recent Memories</h2>
+            <div class="row-container">
+                <div class="scroll-indicator">→</div>
+                <div class="video-row">
+                    <div class="thumbnail" onclick="playVideo('media/Aadu_Dance_DIY_Club_Final.mp3.mov')" data-previewUrl="media/Aadu_Dance_DIY_Club_Final.mp3.mov">
+                        <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=500" alt="Dance">
+                        <video class="thumbnail-preview" muted playsinline loop></video>
+                        <div class="thumbnail-title">Aadu Dance DIY Club</div>
+                    </div>
+                </div>
             </div>
-
-            <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_4.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_4.mp4">
-                <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500" alt="Thumbnail 4">
-                <video class="thumbnail-preview"></video>
-                <div class="thumbnail-title">Clay Project 4</div>
-            </div>
-
-            </div>
-        </div>
         </div>
 
         <!-- * US Content -->
         <div id="us-content" style="display: none;">
-        <!-- Featured Section for US -->
-        <div class="featured-section" id="us-featured">
-            <video class="featured-video" id="us-featured-video" muted autoplay loop>
-                <source src="" type="video/mp4">
-            </video>
-            <div class="featured-content">
-                <div class="featured-title" id="us-featured-title">Featured Video</div>
-                <div class="featured-description" id="us-featured-desc">Watch this amazing video</div>
-                <button class="watch-now-btn" onclick="playFeaturedVideo('US')">Watch Now</button>
-            </div>
-        </div>
-
-        <h2 class="row-title">Popular Videos</h2>
-        <div class="row-container">
-            <div class="scroll-indicator">→</div>
-            <div class="video-row">
-                
-                <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_1.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_1.mp4">
-                    <img src="https://images.unsplash.com/photo-1506744626753-eda8183248c8?w=500" alt="Thumbnail 1">
-                    <video class="thumbnail-preview"></video>
-                    <div class="thumbnail-title">Popular Video 1</div>
+            <div class="featured-section" id="us-featured">
+                <video class="featured-video" id="us-featured-video" muted autoplay loop></video>
+                <div class="featured-content">
+                    <div class="featured-title" id="us-featured-title">Featured Video</div>
+                    <div class="featured-description" id="us-featured-desc">Watch this amazing video</div>
+                    <button class="watch-now-btn" onclick="playFeaturedVideo('US')">▶ Play</button>
                 </div>
-                
-                <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_2.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_2.mp4">
-                    <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=500" alt="Thumbnail 2">
-                    <video class="thumbnail-preview"></video>
-                    <div class="thumbnail-title">Popular Video 2</div>
-                </div>
-                
-                <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_3.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_3.mp4">
-                    <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=500" alt="Thumbnail 3">
-                    <video class="thumbnail-preview"></video>
-                    <div class="thumbnail-title">Popular Video 3</div>
-                </div>
-                
-                <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_4.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_4.mp4">
-                    <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=500" alt="Thumbnail 4">
-                    <video class="thumbnail-preview"></video>
-                    <div class="thumbnail-title">Popular Video 4</div>
-                </div>
-                
-                <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_5.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_5.mp4">
-                    <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=500" alt="Thumbnail 5">
-                    <video class="thumbnail-preview"></video>
-                    <div class="thumbnail-title">Popular Video 5</div>
-                </div>
-                
-            </div>
-        </div>
-        
-        <h2 class="row-title">Trending Now</h2>
-        <div class="row-container">
-            <div class="scroll-indicator">→</div>
-            <div class="video-row">
-            
-            <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_6.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_6.mp4">
-                <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500" alt="Thumbnail 6">
-                <video class="thumbnail-preview"></video>
-                <div class="thumbnail-title">Trending 1</div>
             </div>
 
-            <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_7.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_7.mp4">
-                <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500" alt="Thumbnail 7">
-                <video class="thumbnail-preview"></video>
-                <div class="thumbnail-title">Trending 2</div>
+            <!-- Dynamic Added Videos Row (From Google Sheets) -->
+            <div id="us-sheet-section" style="display: none;">
+                <h2 class="row-title">Recently Added Memories</h2>
+                <div class="row-container">
+                    <div class="scroll-indicator">→</div>
+                    <div class="video-row" id="us-sheet-row"></div>
+                </div>
             </div>
 
-            <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_8.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_8.mp4">
-                <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500" alt="Thumbnail 8">
-                <video class="thumbnail-preview"></video>
-                <div class="thumbnail-title">Trending 3</div>
+            <h2 class="row-title">Popular Videos</h2>
+            <div class="row-container">
+                <div class="scroll-indicator">→</div>
+                <div class="video-row">
+                    <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_1.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_1.mp4">
+                        <img src="https://images.unsplash.com/photo-1506744626753-eda8183248c8?w=500" alt="Thumbnail 1">
+                        <video class="thumbnail-preview" muted playsinline loop></video>
+                        <div class="thumbnail-title">Popular Video 1</div>
+                    </div>
+                </div>
             </div>
-
-            <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_9.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_9.mp4">
-                <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500" alt="Thumbnail 9">
-                <video class="thumbnail-preview"></video>
-                <div class="thumbnail-title">Trending 4</div>
-            </div>
-
-            </div>
-        </div>
         </div>
     </div>
 
+    <!-- Video Player Screen -->
     <div id="player-screen">
-        <button class="back-btn" onclick="closeVideo()">← Back to Browse</button>
+        <button class="back-btn" onclick="closeVideo()">← Back</button>
         <video id="main-player" controls>
             <source id="video-source" src="" type="video/mp4">
             Your browser does not support the video tag.
@@ -629,215 +462,216 @@
     </div>
 
     <script>
-        // Get references to our different screens
+        // -------------------------------------------------------------
+        // IMPORTANT: PASTE YOUR GOOGLE SHEET CSV LINK HERE!
+        // Format should be "https://docs.google.com/spreadsheets/d/YOUR_ID/pub?output=csv"
+        // -------------------------------------------------------------
+        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRwziuMgMsgWM8ChqqBNnIqMPFJpUauQKUOY72c9zwxKvJUTNtC1EItgOLFGWEVHF8bWZRjwwPAl08b/pub?output=csv"; 
+
+        // DOM Elements
         const profileScreen = document.getElementById('profile-screen');
         const browseScreen = document.getElementById('browse-screen');
         const playerScreen = document.getElementById('player-screen');
-        
         const videoPlayer = document.getElementById('main-player');
-        const videoSource = document.getElementById('video-source');
-        const sonuContent = document.getElementById('sonu-content');
-        const aaduContent = document.getElementById('aadu-content');
-        const usContent = document.getElementById('us-content');
-        const currentUserDisplay = document.getElementById('current-user-display');
         
-        // Track current user
         let currentUser = null;
-        
-        // Track if we should play a video after intro
         let pendingVideoUrl = null;
         let isPlayingVideoIntro = false;
         
-        // Featured video data for each user
+        const INTRO_VIDEO_URL = "media/vidssave.com Netflix New Logo Animation 2019 360P.mp4";
+
         const userFeaturedVideos = {
-            'Sonu': [
-                { title: 'My Favorite Series', desc: 'A great show to watch', url: 'YOUR_VIDEO_URL_HERE_1.mp4' },
-                { title: 'Documentary', desc: 'Explore the world', url: 'YOUR_VIDEO_URL_HERE_2.mp4' },
-                { title: 'Sonu Picks', desc: 'Hand-picked for you', url: 'YOUR_VIDEO_URL_HERE_3.mp4' }
-            ],
-            'Aadu': [
-                { title: 'Aadu Dance DIY Club', desc: 'Watch amazing dance performances', url: 'media/Aadu_Dance_DIY_Club_Final.mp3.mov' },
-                { title: 'Clay Modeling', desc: 'Creative projects and tutorials', url: 'YOUR_VIDEO_URL_HERE_4.mp4' },
-                { title: 'Recent Memories', desc: 'Best moments captured', url: 'YOUR_VIDEO_URL_HERE_5.mp4' }
-            ],
-            'US': [
-                { title: 'Blockbuster Action', desc: 'High-octane adventure', url: 'YOUR_VIDEO_URL_HERE_1.mp4' },
-                { title: 'Comedy Classics', desc: 'Laugh out loud moments', url: 'YOUR_VIDEO_URL_HERE_2.mp4' },
-                { title: 'Drama Series', desc: 'Intense storytelling', url: 'YOUR_VIDEO_URL_HERE_3.mp4' }
-            ]
+            'Sonu': [{ title: 'My Favorite Series', desc: 'A great show to watch', url: 'YOUR_VIDEO_URL_HERE_1.mp4' }],
+            'Aadu': [{ title: 'Aadu Dance DIY Club', desc: 'Watch amazing dance performances', url: 'media/Aadu_Dance_DIY_Club_Final.mp3.mov' }],
+            'US': [{ title: 'Blockbuster Action', desc: 'High-octane adventure', url: 'YOUR_VIDEO_URL_HERE_1.mp4' }]
         };
-        
-        // Function to get a random video from user's featured list
-        function getRandomFeaturedVideo(username) {
-            const videos = userFeaturedVideos[username];
-            return videos[Math.floor(Math.random() * videos.length)];
-        }
-        
-        // Function to set featured video for a user
-        function setFeaturedVideo(username) {
-            const video = getRandomFeaturedVideo(username);
-            const prefix = username.toLowerCase();
+
+        // Fetch Data from Google Sheets
+        async function fetchVideosFromSheet(username) {
+            if (!SHEET_CSV_URL) return; // Exit if no URL provided
             
+            try {
+                const response = await fetch(SHEET_CSV_URL);
+                const data = await response.text();
+                
+                // Parse CSV rows, skipping the header row
+                const rows = data.split('\n').slice(1);
+                const prefix = username.toLowerCase();
+                const section = document.getElementById(prefix + '-sheet-section');
+                const containerRow = document.getElementById(prefix + '-sheet-row');
+                
+                containerRow.innerHTML = '';
+                let hasVideos = false;
+
+                // Process rows in reverse so newest additions are first
+                [...rows].reverse().forEach(row => {
+                    if (!row.trim()) return;
+                    
+                    // Regex handles commas perfectly even if they are inside double quotes
+                    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(col => col.replace(/^"|"$/g, '').trim());
+                    
+                    if (cols.length >= 4) {
+                        const profile = cols[0];
+                        const title = cols[1];
+                        const thumb = cols[2];
+                        const video = cols[3];
+                        
+                        // Show video if it belongs to this profile, or if Profile is marked 'All'
+                        if (profile.toLowerCase() === username.toLowerCase() || profile.toLowerCase() === 'all') {
+                            hasVideos = true;
+                            
+                            const div = document.createElement('div');
+                            div.className = 'thumbnail';
+                            div.onclick = function() { playVideo(video); };
+                            div.setAttribute('data-previewUrl', video);
+
+                            div.innerHTML = `
+                                <img src="${thumb}" alt="${title}">
+                                <video class="thumbnail-preview" muted playsinline loop></video>
+                                <div class="thumbnail-title">${title}</div>
+                            `;
+                            containerRow.appendChild(div);
+                        }
+                    }
+                });
+                
+                if (hasVideos) {
+                    section.style.display = 'block';
+                    initializeThumbnailPreviews();
+                    checkScrollIndicators();
+                }
+
+            } catch (error) {
+                console.error("Failed to load data from Google Sheets:", error);
+            }
+        }
+
+        function setFeaturedVideo(username) {
+            const video = userFeaturedVideos[username][0];
+            const prefix = username.toLowerCase();
             document.getElementById(prefix + '-featured-video').src = video.url;
             document.getElementById(prefix + '-featured-title').textContent = video.title;
             document.getElementById(prefix + '-featured-desc').textContent = video.desc;
         }
         
-        // Function to play featured video
         function playFeaturedVideo(username) {
-            const prefix = username.toLowerCase();
-            const videoUrl = document.getElementById(prefix + '-featured-video').src;
-            
-            if (videoUrl.includes('YOUR_VIDEO_URL_HERE')) {
-                alert("Oops! You need to replace the placeholder video URL in the code with a real video link first.");
-                return;
-            }
-            
+            const videoUrl = document.getElementById(username.toLowerCase() + '-featured-video').src;
+            if (videoUrl.includes('YOUR_VIDEO_URL_HERE')) return alert("Replace placeholder URL first.");
             playVideo(videoUrl);
         }
 
-        // Function to hide profiles and show the dashboard
         function enterDashboard(username) {
             currentUser = username;
-            currentUserDisplay.textContent = username + "'s Dashboard";
+            document.getElementById('current-user-display').textContent = username + "'s Profile";
             
-            // Show/hide user-specific content
-            if (username === 'Sonu') {
-                sonuContent.style.display = 'block';
-                aaduContent.style.display = 'none';
-                usContent.style.display = 'none';
-                setFeaturedVideo('Sonu');
-            } else if (username === 'Aadu') {
-                sonuContent.style.display = 'none';
-                aaduContent.style.display = 'block';
-                usContent.style.display = 'none';
-                setFeaturedVideo('Aadu');
-            } else if (username === 'US') {
-                sonuContent.style.display = 'none';
-                aaduContent.style.display = 'none';
-                usContent.style.display = 'block';
-                setFeaturedVideo('US');
-            }
+            // Hide all contents
+            ['sonu', 'aadu', 'us'].forEach(user => {
+                document.getElementById(user + '-content').style.display = 'none';
+            });
+            
+            // Show current user content
+            document.getElementById(username.toLowerCase() + '-content').style.display = 'block';
+            setFeaturedVideo(username);
+            
+            // Fetch dynamic videos from the Google Sheet
+            fetchVideosFromSheet(username);
             
             profileScreen.style.display = 'none';
             browseScreen.style.display = 'block';
             
-            // Reinitialize scroll indicators for the new content
-            setTimeout(function() {
+            setTimeout(() => {
                 checkScrollIndicators();
                 initializeScrollIndicators();
                 initializeThumbnailPreviews();
             }, 100);
         }
 
-        // Function to go back to the profile selection screen
         function logout() {
             currentUser = null;
             browseScreen.style.display = 'none';
             profileScreen.style.display = 'flex';
         }
 
-        // Function to open the video player and start playing a specific URL
         function playVideo(videoUrl) {
-            // Check if the user forgot to replace the placeholder
-            if (videoUrl.includes('YOUR_VIDEO_URL_HERE')) {
-                alert("Oops! You need to replace the placeholder video URL in the code with a real video link first.");
-                return;
-            }
-
+            if (videoUrl.includes('YOUR_VIDEO_URL_HERE')) return alert("Replace placeholder URL first.");
             browseScreen.style.display = 'none';
             playerScreen.style.display = 'block';
             
-            // Set the video source to the URL passed from the thumbnail click
-            videoSource.src = videoUrl;
+            pendingVideoUrl = videoUrl;
+            isPlayingVideoIntro = true;
             
-            // Reload the player with the new source and play
+            videoPlayer.className = '';
+            videoPlayer.src = INTRO_VIDEO_URL;
             videoPlayer.load();
             videoPlayer.play();
         }
 
-        // Function to close the video player and return to dashboard
+        videoPlayer.addEventListener('ended', function() {
+            if (isPlayingVideoIntro && pendingVideoUrl) {
+                isPlayingVideoIntro = false;
+                videoPlayer.className = 'video-fade-out';
+                videoPlayer.src = pendingVideoUrl;
+                videoPlayer.load();
+                
+                videoPlayer.addEventListener('playing', function onPlaying() {
+                    videoPlayer.className = 'video-fade-in';
+                    videoPlayer.removeEventListener('playing', onPlaying);
+                });
+                videoPlayer.play();
+            }
+        });
+
         function closeVideo() {
-            // Pause the video
             videoPlayer.pause();
-            
-            // Hide player, show browse screen
+            videoPlayer.className = '';
+            isPlayingVideoIntro = false;
+            pendingVideoUrl = null;
+            videoPlayer.src = "";
             playerScreen.style.display = 'none';
             browseScreen.style.display = 'block';
         }
 
-        // Function to check and show scroll indicator if videos overflow the screen
         function checkScrollIndicators() {
-            const rowContainers = document.querySelectorAll('.row-container');
-            rowContainers.forEach(container => {
+            document.querySelectorAll('.row-container').forEach(container => {
                 const videoRow = container.querySelector('.video-row');
                 const scrollIndicator = container.querySelector('.scroll-indicator');
-                
-                // Show indicator if content is scrollable (scrollWidth > clientWidth)
-                if (videoRow.scrollWidth > videoRow.clientWidth) {
-                    scrollIndicator.classList.add('show');
-                } else {
-                    scrollIndicator.classList.remove('show');
+                if(scrollIndicator) {
+                    if (videoRow.scrollWidth > videoRow.clientWidth) scrollIndicator.classList.add('show');
+                    else scrollIndicator.classList.remove('show');
                 }
             });
         }
 
-        // Function to scroll video row to the right
-        function scrollVideoRow(scrollIndicator) {
-            const container = scrollIndicator.closest('.row-container');
-            const videoRow = container.querySelector('.video-row');
-            
-            // Scroll by the width of one thumbnail (250px) + gap (15px)
-            videoRow.scrollBy({
-                left: 265,
-                behavior: 'smooth'
-            });
-        }
-
-        // Function to initialize scroll indicator click handlers
         function initializeScrollIndicators() {
-            const indicators = document.querySelectorAll('.scroll-indicator');
-            indicators.forEach(indicator => {
-                indicator.removeEventListener('click', scrollIndicatorClickHandler);
-                indicator.addEventListener('click', scrollIndicatorClickHandler);
+            document.querySelectorAll('.scroll-indicator').forEach(indicator => {
+                indicator.removeEventListener('click', function() {
+                    this.closest('.row-container').querySelector('.video-row').scrollBy({ left: 265, behavior: 'smooth' });
+                });
+                indicator.addEventListener('click', function() {
+                    this.closest('.row-container').querySelector('.video-row').scrollBy({ left: 265, behavior: 'smooth' });
+                });
             });
         }
 
-        // Scroll indicator click handler
-        function scrollIndicatorClickHandler() {
-            scrollVideoRow(this);
-        }
-
-        // Function to initialize thumbnail hover preview
         function initializeThumbnailPreviews() {
-            const thumbnails = document.querySelectorAll('.thumbnail');
-            thumbnails.forEach(thumbnail => {
-                thumbnail.addEventListener('mouseenter', function() {
-                    const previewVideo = this.querySelector('.thumbnail-preview');
-                    const videoUrl = this.dataset.previewUrl;
-                    
-                    if (previewVideo && videoUrl) {
-                        previewVideo.src = videoUrl;
-                        previewVideo.style.display = 'block';
-                        previewVideo.muted = true;
-                        previewVideo.play().catch(err => console.log('Preview play failed:', err));
+            document.querySelectorAll('.thumbnail').forEach(thumbnail => {
+                thumbnail.onmouseenter = function() {
+                    const preview = this.querySelector('.thumbnail-preview');
+                    const url = this.getAttribute('data-previewUrl');
+                    if (preview && url && !url.includes('YOUR_VIDEO')) {
+                        if (!preview.src || !preview.src.endsWith(url)) preview.src = url;
+                        preview.style.display = 'block';
+                        preview.play().catch(e => console.log('Preview failed:', e));
                     }
-                });
-                
-                thumbnail.addEventListener('mouseleave', function() {
-                    const previewVideo = this.querySelector('.thumbnail-preview');
-                    if (previewVideo) {
-                        previewVideo.pause();
-                        previewVideo.style.display = 'none';
-                        previewVideo.currentTime = 0;
-                    }
-                });
+                };
+                thumbnail.onmouseleave = function() {
+                    const preview = this.querySelector('.thumbnail-preview');
+                    if (preview) { preview.pause(); preview.style.display = 'none'; preview.currentTime = 0; }
+                };
             });
         }
 
-        // Run check when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            // Handle intro screen sequence
             const introScreen = document.getElementById('intro-screen');
             const introVideo = document.getElementById('intro-video');
             const profiles = document.querySelectorAll('.profile');
@@ -845,40 +679,18 @@
             function hideIntroScreen() {
                 introScreen.style.opacity = '0';
                 introScreen.style.transition = 'opacity 0.5s ease-out';
-                setTimeout(function() {
+                setTimeout(() => {
                     introScreen.style.display = 'none';
-                    // Add pop-in animation to profiles
-                    profiles.forEach((profile) => {
-                        profile.classList.add('pop-in');
-                    });
+                    profiles.forEach(p => p.classList.add('pop-in'));
                 }, 500);
             }
 
-            // When video ends, hide intro and reveal profiles with animation
             introVideo.addEventListener('ended', hideIntroScreen, { once: true });
-
-            // Fallback: Hide intro after 8 seconds (video duration + buffer) if it hasn't ended
-            // This ensures profiles show even if video fails to load or play
-            const fallbackTimeout = setTimeout(hideIntroScreen, 8000);
-            
-            // Cancel fallback if video ends naturally
-            introVideo.addEventListener('ended', function() {
-                clearTimeout(fallbackTimeout);
-            }, { once: true });
-
-            // Allow clicking on intro to skip
-            introScreen.addEventListener('click', function() {
-                clearTimeout(fallbackTimeout);
-                hideIntroScreen();
-            });
-
-            // Initialize dashboard elements after intro
-            checkScrollIndicators();
-            initializeScrollIndicators();
-            initializeThumbnailPreviews();
+            const fallback = setTimeout(hideIntroScreen, 8000);
+            introVideo.addEventListener('ended', () => clearTimeout(fallback), { once: true });
+            introScreen.addEventListener('click', () => { clearTimeout(fallback); hideIntroScreen(); });
         });
         
-        // Also check on window resize in case the screen is resized
         window.addEventListener('resize', checkScrollIndicators);
     </script>
 </body>
