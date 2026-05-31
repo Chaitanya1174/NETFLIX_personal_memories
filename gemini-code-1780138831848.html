@@ -113,6 +113,7 @@
             height: 500px;
             margin: -20px -40px 40px -40px;
             overflow: hidden;
+            background-color: #000;
         }
 
         .featured-video {
@@ -123,6 +124,7 @@
             height: 100%;
             object-fit: cover;
             filter: brightness(0.5);
+            pointer-events: none; /* Prevents clicking the youtube iframe in the background */
         }
 
         .featured-content {
@@ -201,18 +203,6 @@
             border-radius: 4px;
         }
 
-        .thumbnail-preview {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 4px;
-            display: none;
-            background-color: #000;
-        }
-
         .thumbnail-title {
             position: absolute;
             bottom: 0;
@@ -262,7 +252,7 @@
             position: relative;
         }
 
-        /* --- SCREEN: VIDEO PLAYER --- */
+        /* --- SCREEN: YOUTUBE VIDEO PLAYER --- */
         #player-screen {
             display: none;
             position: fixed;
@@ -291,9 +281,27 @@
             border-color: transparent;
         }
 
-        video { width: 100%; height: 100%; outline: none; }
-        .video-fade-out { opacity: 0; transition: none; }
-        .video-fade-in { opacity: 1; transition: opacity 1.5s ease-in; }
+        #intro-playback { 
+            width: 100%; height: 100%; 
+            outline: none; 
+            background: black;
+        }
+
+        #yt-iframe {
+            width: 100%; height: 100%;
+            border: none;
+            display: none;
+            background: black;
+        }
+        
+        .video-fade-in { 
+            animation: fadeIn 1s ease-in forwards; 
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
 
         /* --- INTRO SCREEN --- */
         #intro-screen {
@@ -315,14 +323,12 @@
 </head>
 <body>
 
-    <!-- Intro Screen -->
     <div id="intro-screen">
         <video id="intro-video" autoplay muted preload="auto">
             <source src="media/vidssave.com Netflix New Logo Animation 2019 360P.mp4" type="video/mp4">
         </video>
     </div>
 
-    <!-- Profile Selection Screen -->
     <div id="profile-screen">
         <h1>Who's watching?</h1>
         <div class="profiles-container">
@@ -341,7 +347,6 @@
         </div>
     </div>
 
-    <!-- Main Browse Dashboard -->
     <div id="browse-screen">
         <div class="navbar">
             <div class="logo">NETFLIX</div>
@@ -351,10 +356,9 @@
             </div>
         </div>
 
-        <!-- * Sonu's Content -->
         <div id="sonu-content" style="display: none;">
             <div class="featured-section" id="sonu-featured">
-                <video class="featured-video" id="sonu-featured-video" muted autoplay loop></video>
+                <iframe class="featured-video" id="sonu-featured-video" frameborder="0" allow="autoplay; encrypted-media" mute="1"></iframe>
                 <div class="featured-content">
                     <div class="featured-title" id="sonu-featured-title">Featured Video</div>
                     <div class="featured-description" id="sonu-featured-desc">Watch this amazing video</div>
@@ -362,7 +366,6 @@
                 </div>
             </div>
 
-            <!-- Dynamic Added Videos Row (From Google Sheets) -->
             <div id="sonu-sheet-section" style="display: none;">
                 <h2 class="row-title">Recently Added Memories</h2>
                 <div class="row-container">
@@ -371,24 +374,21 @@
                 </div>
             </div>
 
-            <!-- Static Row Fallback -->
             <h2 class="row-title">My Favorites</h2>
             <div class="row-container">
                 <div class="scroll-indicator">→</div>
                 <div class="video-row">
-                    <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_1.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_1.mp4">
-                        <img src="https://images.unsplash.com/photo-1506744626753-eda8183248c8?w=500" alt="Thumbnail">
-                        <video class="thumbnail-preview" muted playsinline loop></video>
+                    <div class="thumbnail" onclick="playVideo('https://www.youtube.com/watch?v=dQw4w9WgXcQ')">
+                        <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg" alt="Thumbnail">
                         <div class="thumbnail-title">Sonu Favorite 1</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- * Aadu's Content -->
         <div id="aadu-content" style="display: none;">
             <div class="featured-section" id="aadu-featured">
-                <video class="featured-video" id="aadu-featured-video" muted autoplay loop></video>
+                <iframe class="featured-video" id="aadu-featured-video" frameborder="0" allow="autoplay; encrypted-media" mute="1"></iframe>
                 <div class="featured-content">
                     <div class="featured-title" id="aadu-featured-title">Featured Video</div>
                     <div class="featured-description" id="aadu-featured-desc">Watch this amazing video</div>
@@ -396,7 +396,6 @@
                 </div>
             </div>
 
-            <!-- Dynamic Added Videos Row (From Google Sheets) -->
             <div id="aadu-sheet-section" style="display: none;">
                 <h2 class="row-title">Recently Added Memories</h2>
                 <div class="row-container">
@@ -409,19 +408,17 @@
             <div class="row-container">
                 <div class="scroll-indicator">→</div>
                 <div class="video-row">
-                    <div class="thumbnail" onclick="playVideo('media/Aadu_Dance_DIY_Club_Final.mp3.mov')" data-previewUrl="media/Aadu_Dance_DIY_Club_Final.mp3.mov">
-                        <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=500" alt="Dance">
-                        <video class="thumbnail-preview" muted playsinline loop></video>
+                    <div class="thumbnail" onclick="playVideo('https://www.youtube.com/watch?v=dQw4w9WgXcQ')">
+                        <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg" alt="Dance">
                         <div class="thumbnail-title">Aadu Dance DIY Club</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- * US Content -->
         <div id="us-content" style="display: none;">
             <div class="featured-section" id="us-featured">
-                <video class="featured-video" id="us-featured-video" muted autoplay loop></video>
+                <iframe class="featured-video" id="us-featured-video" frameborder="0" allow="autoplay; encrypted-media" mute="1"></iframe>
                 <div class="featured-content">
                     <div class="featured-title" id="us-featured-title">Featured Video</div>
                     <div class="featured-description" id="us-featured-desc">Watch this amazing video</div>
@@ -429,7 +426,6 @@
                 </div>
             </div>
 
-            <!-- Dynamic Added Videos Row (From Google Sheets) -->
             <div id="us-sheet-section" style="display: none;">
                 <h2 class="row-title">Recently Added Memories</h2>
                 <div class="row-container">
@@ -442,9 +438,8 @@
             <div class="row-container">
                 <div class="scroll-indicator">→</div>
                 <div class="video-row">
-                    <div class="thumbnail" onclick="playVideo('YOUR_VIDEO_URL_HERE_1.mp4')" data-previewUrl="YOUR_VIDEO_URL_HERE_1.mp4">
-                        <img src="https://images.unsplash.com/photo-1506744626753-eda8183248c8?w=500" alt="Thumbnail 1">
-                        <video class="thumbnail-preview" muted playsinline loop></video>
+                    <div class="thumbnail" onclick="playVideo('https://www.youtube.com/watch?v=dQw4w9WgXcQ')">
+                        <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg" alt="Thumbnail 1">
                         <div class="thumbnail-title">Popular Video 1</div>
                     </div>
                 </div>
@@ -452,13 +447,14 @@
         </div>
     </div>
 
-    <!-- Video Player Screen -->
     <div id="player-screen">
         <button class="back-btn" onclick="closeVideo()">← Back</button>
-        <video id="main-player" controls>
-            <source id="video-source" src="" type="video/mp4">
-            Your browser does not support the video tag.
+        
+        <video id="intro-playback" playsinline>
+            <source src="media/vidssave.com Netflix New Logo Animation 2019 360P.mp4" type="video/mp4">
         </video>
+
+        <iframe id="yt-iframe" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
     </div>
 
     <script>
@@ -472,29 +468,53 @@
         const profileScreen = document.getElementById('profile-screen');
         const browseScreen = document.getElementById('browse-screen');
         const playerScreen = document.getElementById('player-screen');
-        const videoPlayer = document.getElementById('main-player');
+        
+        const introPlayback = document.getElementById('intro-playback');
+        const ytIframe = document.getElementById('yt-iframe');
         
         let currentUser = null;
-        let pendingVideoUrl = null;
+        let pendingYouTubeUrl = null;
         let isPlayingVideoIntro = false;
-        
-        const INTRO_VIDEO_URL = "media/vidssave.com Netflix New Logo Animation 2019 360P.mp4";
 
+        // Dummy data for featured section (Replace URLs with your actual YouTube links)
         const userFeaturedVideos = {
-            'Sonu': [{ title: 'My Favorite Series', desc: 'A great show to watch', url: 'YOUR_VIDEO_URL_HERE_1.mp4' }],
-            'Aadu': [{ title: 'Aadu Dance DIY Club', desc: 'Watch amazing dance performances', url: 'media/Aadu_Dance_DIY_Club_Final.mp3.mov' }],
-            'US': [{ title: 'Blockbuster Action', desc: 'High-octane adventure', url: 'YOUR_VIDEO_URL_HERE_1.mp4' }]
+            'Sonu': [{ title: 'My Favorite Series', desc: 'A great show to watch', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }],
+            'Aadu': [{ title: 'Aadu Dance DIY Club', desc: 'Watch amazing dance performances', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }],
+            'US': [{ title: 'Blockbuster Action', desc: 'High-octane adventure', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }]
         };
+
+        // --- YOUTUBE ID EXTRACTOR HELPER ---
+        function getCleanYouTubeEmbed(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = url.match(regExp);
+            
+            if (match && match[2].length === 11) {
+                const ytId = match[2];
+                return `https://www.youtube.com/embed/${ytId}?autoplay=1&modestbranding=1&rel=0&playsinline=1`;
+            }
+            return url;
+        }
+
+        // --- YOUTUBE THUMBNAIL HELPER ---
+        // Dynamically fetches the standard YouTube thumbnail based on the video URL
+        function getYouTubeThumbnail(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = url.match(regExp);
+            if (match && match[2].length === 11) {
+                return `https://img.youtube.com/vi/${match[2]}/hqdefault.jpg`;
+            }
+            // Return a fallback image if the URL isn't a valid YouTube link
+            return 'https://images.unsplash.com/photo-1506744626753-eda8183248c8?w=500';
+        }
 
         // Fetch Data from Google Sheets
         async function fetchVideosFromSheet(username) {
-            if (!SHEET_CSV_URL) return; // Exit if no URL provided
+            if (!SHEET_CSV_URL) return; 
             
             try {
                 const response = await fetch(SHEET_CSV_URL);
                 const data = await response.text();
                 
-                // Parse CSV rows, skipping the header row
                 const rows = data.split('\n').slice(1);
                 const prefix = username.toLowerCase();
                 const section = document.getElementById(prefix + '-sheet-section');
@@ -503,31 +523,28 @@
                 containerRow.innerHTML = '';
                 let hasVideos = false;
 
-                // Process rows in reverse so newest additions are first
                 [...rows].reverse().forEach(row => {
                     if (!row.trim()) return;
                     
-                    // Regex handles commas perfectly even if they are inside double quotes
                     const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(col => col.replace(/^"|"$/g, '').trim());
                     
                     if (cols.length >= 4) {
                         const profile = cols[0];
                         const title = cols[1];
-                        const thumb = cols[2];
                         const video = cols[3];
                         
-                        // Show video if it belongs to this profile, or if Profile is marked 'All'
+                        // Ignore the thumbnail from the sheet and generate the YouTube one
+                        const thumb = getYouTubeThumbnail(video);
+                        
                         if (profile.toLowerCase() === username.toLowerCase() || profile.toLowerCase() === 'all') {
                             hasVideos = true;
                             
                             const div = document.createElement('div');
                             div.className = 'thumbnail';
                             div.onclick = function() { playVideo(video); };
-                            div.setAttribute('data-previewUrl', video);
 
                             div.innerHTML = `
                                 <img src="${thumb}" alt="${title}">
-                                <video class="thumbnail-preview" muted playsinline loop></video>
                                 <div class="thumbnail-title">${title}</div>
                             `;
                             containerRow.appendChild(div);
@@ -537,7 +554,6 @@
                 
                 if (hasVideos) {
                     section.style.display = 'block';
-                    initializeThumbnailPreviews();
                     checkScrollIndicators();
                 }
 
@@ -549,14 +565,20 @@
         function setFeaturedVideo(username) {
             const video = userFeaturedVideos[username][0];
             const prefix = username.toLowerCase();
-            document.getElementById(prefix + '-featured-video').src = video.url;
+            
+            // For the background featured video, we want it muted, autoplaying, looping, and unclickable
+            const embedUrl = getCleanYouTubeEmbed(video.url) + "&mute=1&loop=1&controls=0&disablekb=1";
+            
+            document.getElementById(prefix + '-featured-video').src = embedUrl;
             document.getElementById(prefix + '-featured-title').textContent = video.title;
             document.getElementById(prefix + '-featured-desc').textContent = video.desc;
+            
+            // Save the raw URL for the play button
+            document.getElementById(prefix + '-featured-video').setAttribute('data-rawUrl', video.url);
         }
         
         function playFeaturedVideo(username) {
-            const videoUrl = document.getElementById(username.toLowerCase() + '-featured-video').src;
-            if (videoUrl.includes('YOUR_VIDEO_URL_HERE')) return alert("Replace placeholder URL first.");
+            const videoUrl = document.getElementById(username.toLowerCase() + '-featured-video').getAttribute('data-rawUrl');
             playVideo(videoUrl);
         }
 
@@ -564,16 +586,13 @@
             currentUser = username;
             document.getElementById('current-user-display').textContent = username + "'s Profile";
             
-            // Hide all contents
             ['sonu', 'aadu', 'us'].forEach(user => {
                 document.getElementById(user + '-content').style.display = 'none';
             });
             
-            // Show current user content
             document.getElementById(username.toLowerCase() + '-content').style.display = 'block';
             setFeaturedVideo(username);
             
-            // Fetch dynamic videos from the Google Sheet
             fetchVideosFromSheet(username);
             
             profileScreen.style.display = 'none';
@@ -582,7 +601,6 @@
             setTimeout(() => {
                 checkScrollIndicators();
                 initializeScrollIndicators();
-                initializeThumbnailPreviews();
             }, 100);
         }
 
@@ -590,43 +608,64 @@
             currentUser = null;
             browseScreen.style.display = 'none';
             profileScreen.style.display = 'flex';
+            
+            // Stop featured videos from playing in the background
+            document.querySelectorAll('.featured-video').forEach(iframe => {
+                iframe.src = '';
+            });
         }
 
-        function playVideo(videoUrl) {
-            if (videoUrl.includes('YOUR_VIDEO_URL_HERE')) return alert("Replace placeholder URL first.");
+        // Main playback sequence (Intro -> YouTube)
+        function playVideo(rawUrl) {
+            if (rawUrl.includes('YOUR_VIDEO_URL_HERE')) return alert("Replace placeholder URL first.");
+            
             browseScreen.style.display = 'none';
             playerScreen.style.display = 'block';
             
-            pendingVideoUrl = videoUrl;
+            // Process the link through our helper
+            pendingYouTubeUrl = getCleanYouTubeEmbed(rawUrl);
             isPlayingVideoIntro = true;
             
-            videoPlayer.className = '';
-            videoPlayer.src = INTRO_VIDEO_URL;
-            videoPlayer.load();
-            videoPlayer.play();
+            // Reset visibility
+            introPlayback.style.display = 'block';
+            ytIframe.style.display = 'none';
+            ytIframe.className = '';
+            
+            // Stop iframe buffering
+            ytIframe.src = ""; 
+            
+            // Play Intro
+            introPlayback.currentTime = 0;
+            introPlayback.play();
         }
 
-        videoPlayer.addEventListener('ended', function() {
-            if (isPlayingVideoIntro && pendingVideoUrl) {
+        // When the Netflix intro finishes, swap to YouTube
+        introPlayback.addEventListener('ended', function() {
+            if (isPlayingVideoIntro && pendingYouTubeUrl) {
                 isPlayingVideoIntro = false;
-                videoPlayer.className = 'video-fade-out';
-                videoPlayer.src = pendingVideoUrl;
-                videoPlayer.load();
                 
-                videoPlayer.addEventListener('playing', function onPlaying() {
-                    videoPlayer.className = 'video-fade-in';
-                    videoPlayer.removeEventListener('playing', onPlaying);
-                });
-                videoPlayer.play();
+                // Hide Intro, Show Iframe
+                introPlayback.style.display = 'none';
+                ytIframe.style.display = 'block';
+                
+                // Add smooth fade in effect
+                ytIframe.classList.add('video-fade-in');
+                
+                // Set source to trigger Youtube Autoplay
+                ytIframe.src = pendingYouTubeUrl;
             }
         });
 
         function closeVideo() {
-            videoPlayer.pause();
-            videoPlayer.className = '';
+            // Stop intro if it was playing
+            introPlayback.pause();
             isPlayingVideoIntro = false;
-            pendingVideoUrl = null;
-            videoPlayer.src = "";
+            pendingYouTubeUrl = null;
+            
+            // Stop youtube playback completely
+            ytIframe.src = ""; 
+            ytIframe.style.display = 'none';
+            
             playerScreen.style.display = 'none';
             browseScreen.style.display = 'block';
         }
@@ -650,24 +689,6 @@
                 indicator.addEventListener('click', function() {
                     this.closest('.row-container').querySelector('.video-row').scrollBy({ left: 265, behavior: 'smooth' });
                 });
-            });
-        }
-
-        function initializeThumbnailPreviews() {
-            document.querySelectorAll('.thumbnail').forEach(thumbnail => {
-                thumbnail.onmouseenter = function() {
-                    const preview = this.querySelector('.thumbnail-preview');
-                    const url = this.getAttribute('data-previewUrl');
-                    if (preview && url && !url.includes('YOUR_VIDEO')) {
-                        if (!preview.src || !preview.src.endsWith(url)) preview.src = url;
-                        preview.style.display = 'block';
-                        preview.play().catch(e => console.log('Preview failed:', e));
-                    }
-                };
-                thumbnail.onmouseleave = function() {
-                    const preview = this.querySelector('.thumbnail-preview');
-                    if (preview) { preview.pause(); preview.style.display = 'none'; preview.currentTime = 0; }
-                };
             });
         }
 
