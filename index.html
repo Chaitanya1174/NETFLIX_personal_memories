@@ -448,6 +448,17 @@
     </div>
 
     <script>
+            // The password you want to use
+        const sitePassword = "ourmovienight"; 
+        
+        let userAttempt = prompt("Please enter the password to view this site:");
+        
+        if (userAttempt !== sitePassword) {
+            // If wrong, replace the whole page with a message
+            document.write("<h1 style='color:white; text-align:center; margin-top:20%; font-family:sans-serif;'>Access Denied. Wrong Password! 🎬</h1>");
+            // Stop the rest of the site from loading
+            window.stop(); 
+        }
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSN0hwtG03xooT01pV-e0boWjSNVd93hhKXLX8Gx8Ygs1gbYiTQXwvLY3EOYqEw4oCowzBs8YBCP2VO/pub?gid=2084822117&single=true&output=csv"; 
 
         const profileScreen = document.getElementById('profile-screen');
