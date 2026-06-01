@@ -447,6 +447,7 @@
         // -------------------------------------------------------------
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRwziuMgMsgWM8ChqqBNnIqMPFJpUauQKUOY72c9zwxKvJUTNtC1EItgOLFGWEVHF8bWZRjwwPAl08b/pub?output=csv"; 
 
+
         const profileScreen = document.getElementById('profile-screen');
         const browseScreen = document.getElementById('browse-screen');
         const playerScreen = document.getElementById('player-screen');
@@ -477,11 +478,24 @@
         }
 
         // Fetch Data from Google Sheets and group by category
+        // async function fetchVideosFromSheet(username) {
+        //     if (!SHEET_CSV_URL) return; 
+            
+        //     try {
+        //         const response = await fetch(SHEET_CSV_URL);
+        //         const data = await response.text();
         async function fetchVideosFromSheet(username) {
             if (!SHEET_CSV_URL) return; 
             
             try {
-                const response = await fetch(SHEET_CSV_URL);
+                // 1. Create a unique timestamp string
+                const timestamp = new Date().getTime();
+                
+                // 2. Append it to the URL. (Using '&' because your URL already has a '?')
+                const cacheBustedUrl = `${SHEET_CSV_URL}&_=${timestamp}`;
+                
+                // 3. Force the browser to ignore its local cache completely
+                const response = await fetch(cacheBustedUrl, { cache: 'no-store' });
                 const data = await response.text();
                 
                 const rows = data.split('\n').slice(1);
