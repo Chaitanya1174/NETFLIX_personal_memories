@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Me and Aadu on Netflix</title>
+    <link rel="icon" href="https://assets.nflxext.com/us/ffe/siteui/common/icons/nficon2016.ico">
+    <style>
+        /* --- GLOBAL STYLES --- */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #141414;
+            color: white;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        h1, h2 {
+            font-weight: normal;
+        }
+
+        /* --- SCREEN: WHO'S WATCHING --- */
+        #profile-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        #profile-screen h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .profiles-container {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .profile {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .profile:hover {
+            transform: scale(1.1);
+        }
+
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 4px;
+            object-fit: cover;
+            border: 2px solid transparent;
+        }
+
+        .profile:hover .profile-img {
+            border: 2px solid white;
+        }
+
+        .profile-name {
+            margin-top: 10px;
+            color: #808080;
+            font-size: 1.2rem;
+        }
+
+        .profile:hover .profile-name {
+            color: white;
+        }
+
+        /* --- SCREEN: BROWSE DASHBOARD --- */
+        #browse-screen {
+            display: none;
+            padding: 20px 40px;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 30;
+        }
+
+        .logo {
+            color: #E50914;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .switch-profile-btn {
+            cursor: pointer;
+            color: #b0b0b0;
+            transition: color 0.3s;
+        }
+        
+        .switch-profile-btn:hover {
+            color: white;
+        }
+
+        /* --- FEATURED/HERO SECTION --- */
+        .featured-section {
+            position: relative;
+            width: 100vw;
+            height: 75vh;
+            min-height: 500px;
+            margin: -20px -40px 0 -40px;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .featured-section::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(to top, #141414 0%, transparent 100%);
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .featured-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.6);
+            pointer-events: none;
+        }
+
+        .featured-content {
+            position: absolute;
+            bottom: 150px;
+            left: 40px;
+            right: 40px;
+            color: white;
+            z-index: 10;
+        }
+
+        .featured-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin: 0 0 20px 0;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .featured-description {
+            font-size: 1.2rem;
+            margin: 0 0 30px 0;
+            max-width: 500px;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8);
+        }
+
+        .watch-now-btn {
+            background-color: white;
+            color: black;
+            border: none;
+            padding: 12px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .watch-now-btn:hover {
+            background-color: #e6e6e6;
+        }
+
+        /* --- ROW STYLES --- */
+        .rows-wrapper {
+            position: relative;
+            z-index: 20; 
+            margin-top: -100px;
+        }
+
+        .row-title {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            padding-left: 20px;
+            text-transform: capitalize;
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8);
+        }
+
+        .video-row {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding: 20px;
+            padding-bottom: 40px;
+            scroll-behavior: smooth;
+        }
+
+        .video-row::-webkit-scrollbar {
+            display: none;
+        }
+
+        .thumbnail {
+            min-width: 250px;
+            height: 140px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: transform 0.3s ease;
+            position: relative;
+            background-color: #222;
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .thumbnail-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 30px 10px 10px 10px;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 100%);
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 0 0 4px 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .thumbnail:hover {
+            transform: scale(1.08);
+            z-index: 10;
+        }
+
+        .scroll-indicator {
+            display: none;
+            position: absolute;
+            right: 0px;
+            top: 45%;
+            transform: translateY(-50%);
+            background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%);
+            padding: 60px 10px;
+            border-radius: 4px;
+            color: #b0b0b0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            white-space: nowrap;
+            z-index: 15;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .scroll-indicator:hover {
+            color: white;
+        }
+        
+        .scroll-indicator.show {
+            display: block;
+        }
+        
+        .row-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        /* --- SCREEN: YOUTUBE VIDEO PLAYER --- */
+        #player-screen {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: black;
+            z-index: 100;
+            overflow: hidden; /* Hide scaled iframe edges */
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px; left: 20px;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 101;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: background 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(229, 9, 20, 0.8);
+            border-color: transparent;
+        }
+
+        /* STYLES FOR CLEAN YOUTUBE BACKGROUND TRICK */
+        #intro-video, #intro-playback { 
+            width: 100vw; 
+            height: 100vh; 
+            border: none;
+            pointer-events: none; /* Prevents clicking or hovering to show UI */
+            transform: scale(1.3); /* Zooms in slightly to hide YouTube title/logo edges */
+            
+            /* NEW: Delay fade trick to hide YouTube play button */
+            opacity: 0; 
+            animation: delayedFadeIn 0.5s ease-in forwards 0.8s;
+        }
+
+        /* NEW: Keyframes for the delay fade */
+        @keyframes delayedFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        #yt-iframe {
+            width: 100%; height: 100%;
+            border: none;
+            display: none;
+            background: black;
+        }
+        
+        .video-fade-in { 
+            animation: fadeIn 1s ease-in forwards; 
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* --- INTRO SCREEN --- */
+        #intro-screen {
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; height: 100vh;
+            background-color: #000;
+            position: fixed; top: 0; left: 0;
+            z-index: 1000;
+            overflow: hidden; /* Hide scaled iframe edges */
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .profile.pop-in { animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+    </style>
+</head>
+<body>
+
+    <div id="intro-screen">
+        <iframe id="intro-video" src="https://www.youtube.com/embed/GV3HUDMQ-F8?autoplay=1&mute=1&controls=0&disablekb=1&fs=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1" allow="autoplay; encrypted-media"></iframe>
+    </div>
+
+    <div id="profile-screen">
+        <h1>Who's watching?</h1>
+        <div class="profiles-container">
+            <div class="profile" onclick="enterDashboard('Sonu')">
+                <img class="profile-img" src="https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.jpg" alt="Sonu">
+                <div class="profile-name">Sonu</div>
+            </div>
+            <div class="profile" onclick="enterDashboard('Aadu')" style="animation-delay: 0.2s;">
+                <img class="profile-img" src="https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-88wkdmjrorckekha.jpg" alt="Aadu">
+                <div class="profile-name">Aadu</div>
+            </div>
+            <div class="profile" onclick="enterDashboard('US')" style="animation-delay: 0.4s;">
+                <img class="profile-img" src="https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-88wkdmjrorckekha.jpg" alt="US">
+                <div class="profile-name">US</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="browse-screen">
+        <div class="navbar">
+            <div class="logo">NETFLIX</div>
+            <div class="nav-actions">
+                <span id="current-user-display" style="font-weight: bold;"></span>
+                <span class="switch-profile-btn" onclick="logout()">Switch Profile</span>
+            </div>
+        </div>
+
+        <div id="sonu-content" style="display: none;">
+            <div class="featured-section" id="sonu-featured">
+                <iframe class="featured-video" id="sonu-featured-video" frameborder="0" allow="autoplay; encrypted-media" mute="1"></iframe>
+                <div class="featured-content">
+                    <div class="featured-title" id="sonu-featured-title">Featured Video</div>
+                    <div class="featured-description" id="sonu-featured-desc">Watch this amazing video</div>
+                    <button class="watch-now-btn" onclick="playFeaturedVideo('sonu')">▶ Play</button>
+                </div>
+            </div>
+            <div id="sonu-rows-container" class="rows-wrapper"></div>
+        </div>
+
+        <div id="aadu-content" style="display: none;">
+            <div class="featured-section" id="aadu-featured">
+                <iframe class="featured-video" id="aadu-featured-video" frameborder="0" allow="autoplay; encrypted-media" mute="1"></iframe>
+                <div class="featured-content">
+                    <div class="featured-title" id="aadu-featured-title">Featured Video</div>
+                    <div class="featured-description" id="aadu-featured-desc">Watch this amazing video</div>
+                    <button class="watch-now-btn" onclick="playFeaturedVideo('aadu')">▶ Play</button>
+                </div>
+            </div>
+            <div id="aadu-rows-container" class="rows-wrapper"></div>
+        </div>
+
+        <div id="us-content" style="display: none;">
+            <div class="featured-section" id="us-featured">
+                <iframe class="featured-video" id="us-featured-video" frameborder="0" allow="autoplay; encrypted-media" mute="1"></iframe>
+                <div class="featured-content">
+                    <div class="featured-title" id="us-featured-title">Featured Video</div>
+                    <div class="featured-description" id="us-featured-desc">Watch this amazing video</div>
+                    <button class="watch-now-btn" onclick="playFeaturedVideo('US')">▶ Play</button>
+                </div>
+            </div>
+            <div id="us-rows-container" class="rows-wrapper"></div>
+        </div>
+    </div>
+
+    <div id="player-screen">
+        <button class="back-btn" onclick="closeVideo()">← Back</button>
+        
+        <iframe id="intro-playback" allow="autoplay; encrypted-media"></iframe>
+
+        <iframe id="yt-iframe" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+    </div>
+
+    <script>
+        // -------------------------------------------------------------
+        // IMPORTANT: PASTE YOUR GOOGLE SHEET CSV LINK HERE!
+        // Format should be "https://docs.google.com/spreadsheets/d/YOUR_ID/pub?output=csv"
+        // -------------------------------------------------------------
+        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRwziuMgMsgWM8ChqqBNnIqMPFJpUauQKUOY72c9zwxKvJUTNtC1EItgOLFGWEVHF8bWZRjwwPAl08b/pub?output=csv"; 
+
+        const profileScreen = document.getElementById('profile-screen');
+        const browseScreen = document.getElementById('browse-screen');
+        const playerScreen = document.getElementById('player-screen');
+        const introPlayback = document.getElementById('intro-playback');
+        const ytIframe = document.getElementById('yt-iframe');
+        
+        let currentUser = null;
+        let pendingYouTubeUrl = null;
+        let isPlayingVideoIntro = false;
+        let playbackTimeout = null; // To track and cancel timeouts if user hits 'Back' early
+
+        function getCleanYouTubeEmbed(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = url.match(regExp);
+            if (match && match[2].length === 11) {
+                return `https://www.youtube.com/embed/${match[2]}?autoplay=1&modestbranding=1&rel=0&playsinline=1`;
+            }
+            return url;
+        }
+
+        function getYouTubeThumbnail(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = url.match(regExp);
+            if (match && match[2].length === 11) {
+                return `https://img.youtube.com/vi/${match[2]}/hqdefault.jpg`;
+            }
+            return 'https://images.unsplash.com/photo-1506744626753-eda8183248c8?w=500';
+        }
+
+        // Fetch Data from Google Sheets and group by category
+        async function fetchVideosFromSheet(username) {
+            if (!SHEET_CSV_URL) return; 
+            
+            try {
+                const response = await fetch(SHEET_CSV_URL);
+                const data = await response.text();
+                
+                const rows = data.split('\n').slice(1);
+                const prefix = username.toLowerCase();
+                const container = document.getElementById(prefix + '-rows-container');
+                
+                container.innerHTML = ''; 
+                
+                const categories = {};
+                const allUserVideos = [];
+
+                [...rows].reverse().forEach(row => {
+                    if (!row.trim()) return;
+                    
+                    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(col => col.replace(/^"|"$/g, '').trim());
+                    
+                    if (cols.length >= 4) {
+                        const profile = cols[0];
+                        const title = cols[1];
+                        const video = cols[3];
+                        
+                        const category = (cols.length >= 5 && cols[4]) ? cols[4] : "Recently Added"; 
+                        const thumb = getYouTubeThumbnail(video);
+                        
+                        if (profile.toLowerCase() === username.toLowerCase() || profile.toLowerCase() === 'all') {
+                            allUserVideos.push({ title, url: video, desc: category });
+
+                            if (!categories[category]) {
+                                categories[category] = [];
+                            }
+                            categories[category].push({ title, thumb, video });
+                        }
+                    }
+                });
+
+                if (allUserVideos.length > 0) {
+                    const randomVideo = allUserVideos[Math.floor(Math.random() * allUserVideos.length)];
+                    setFeaturedVideo(username, randomVideo);
+                } else {
+                    setFeaturedVideo(username, null);
+                }
+                
+                for (const [categoryName, videos] of Object.entries(categories)) {
+                    const titleH2 = document.createElement('h2');
+                    titleH2.className = 'row-title';
+                    titleH2.textContent = categoryName;
+                    container.appendChild(titleH2);
+
+                    const rowContainer = document.createElement('div');
+                    rowContainer.className = 'row-container';
+
+                    const scrollIndicator = document.createElement('div');
+                    scrollIndicator.className = 'scroll-indicator';
+                    scrollIndicator.textContent = '→';
+                    
+                    scrollIndicator.onclick = function() {
+                        this.closest('.row-container').querySelector('.video-row').scrollBy({ left: 265, behavior: 'smooth' });
+                    };
+                    
+                    rowContainer.appendChild(scrollIndicator);
+
+                    const videoRow = document.createElement('div');
+                    videoRow.className = 'video-row';
+
+                    videos.forEach(vid => {
+                        const thumbDiv = document.createElement('div');
+                        thumbDiv.className = 'thumbnail';
+                        thumbDiv.onclick = function() { playVideo(vid.video); };
+
+                        thumbDiv.innerHTML = `
+                            <img src="${vid.thumb}" alt="${vid.title}">
+                            <div class="thumbnail-title">${vid.title}</div>
+                        `;
+                        videoRow.appendChild(thumbDiv);
+                    });
+
+                    rowContainer.appendChild(videoRow);
+                    container.appendChild(rowContainer);
+                }
+                
+                setTimeout(checkScrollIndicators, 100);
+
+            } catch (error) {
+                console.error("Failed to load data from Google Sheets:", error);
+            }
+        }
+
+        function setFeaturedVideo(username, videoObj) {
+            const prefix = username.toLowerCase();
+            
+            const iframe = document.getElementById(prefix + '-featured-video');
+            const titleEl = document.getElementById(prefix + '-featured-title');
+            const descEl = document.getElementById(prefix + '-featured-desc');
+            const watchBtn = document.querySelector('#' + prefix + '-content .watch-now-btn');
+            
+            if (videoObj) {
+                const embedUrl = getCleanYouTubeEmbed(videoObj.url) + "&mute=1&loop=1&controls=0&disablekb=1";
+                
+                iframe.src = embedUrl;
+                iframe.style.display = 'block';
+                titleEl.textContent = videoObj.title;
+                descEl.textContent = "From Category: " + videoObj.desc;
+                iframe.setAttribute('data-rawUrl', videoObj.url);
+                watchBtn.style.display = 'inline-block';
+            } else {
+                iframe.src = '';
+                iframe.style.display = 'none';
+                titleEl.textContent = 'No videos listed';
+                descEl.textContent = '';
+                iframe.removeAttribute('data-rawUrl');
+                watchBtn.style.display = 'none';
+            }
+        }
+        
+        function playFeaturedVideo(username) {
+            const iframe = document.getElementById(username.toLowerCase() + '-featured-video');
+            if (iframe.hasAttribute('data-rawUrl')) {
+                const videoUrl = iframe.getAttribute('data-rawUrl');
+                playVideo(videoUrl);
+            }
+        }
+
+        function enterDashboard(username) {
+            currentUser = username;
+            document.getElementById('current-user-display').textContent = username + "'s Profile";
+            
+            ['sonu', 'aadu', 'us'].forEach(user => {
+                document.getElementById(user + '-content').style.display = 'none';
+            });
+            
+            document.getElementById(username.toLowerCase() + '-content').style.display = 'block';
+            
+            fetchVideosFromSheet(username);
+            
+            profileScreen.style.display = 'none';
+            browseScreen.style.display = 'block';
+        }
+
+        function logout() {
+            currentUser = null;
+            browseScreen.style.display = 'none';
+            profileScreen.style.display = 'flex';
+            
+            document.querySelectorAll('.featured-video').forEach(iframe => {
+                iframe.src = '';
+            });
+        }
+
+        function playVideo(rawUrl) {
+            if (rawUrl.includes('YOUR_VIDEO_URL_HERE')) return alert("Replace placeholder URL first.");
+            
+            browseScreen.style.display = 'none';
+            playerScreen.style.display = 'block';
+            
+            pendingYouTubeUrl = getCleanYouTubeEmbed(rawUrl);
+            isPlayingVideoIntro = true;
+            
+            introPlayback.style.display = 'block';
+            ytIframe.style.display = 'none';
+            ytIframe.className = '';
+            ytIframe.src = ""; 
+            
+            // Set the URL with autoplay to trigger the intro
+            introPlayback.src = "https://www.youtube.com/embed/GV3HUDMQ-F8?autoplay=1&mute=1&controls=0&disablekb=1&fs=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1";
+            
+            // The video is 4 seconds long. We swap out the frames exactly at 4.5 seconds.
+            playbackTimeout = setTimeout(() => {
+                if (isPlayingVideoIntro && pendingYouTubeUrl) {
+                    isPlayingVideoIntro = false;
+                    
+                    introPlayback.style.display = 'none';
+                    introPlayback.src = ""; // Stops the intro video from playing in background
+                    
+                    ytIframe.style.display = 'block';
+                    ytIframe.classList.add('video-fade-in');
+                    ytIframe.src = pendingYouTubeUrl;
+                }
+            }, 4500); 
+        }
+
+        function closeVideo() {
+            clearTimeout(playbackTimeout); // Prevent main video from loading if backed out early
+            isPlayingVideoIntro = false;
+            pendingYouTubeUrl = null;
+            
+            introPlayback.src = ""; 
+            ytIframe.src = ""; 
+            ytIframe.style.display = 'none';
+            
+            playerScreen.style.display = 'none';
+            browseScreen.style.display = 'block';
+        }
+
+        function checkScrollIndicators() {
+            document.querySelectorAll('.row-container').forEach(container => {
+                const videoRow = container.querySelector('.video-row');
+                const scrollIndicator = container.querySelector('.scroll-indicator');
+                if(scrollIndicator && videoRow) {
+                    if (videoRow.scrollWidth > videoRow.clientWidth) scrollIndicator.classList.add('show');
+                    else scrollIndicator.classList.remove('show');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const introScreen = document.getElementById('intro-screen');
+            const profiles = document.querySelectorAll('.profile');
+
+            function hideIntroScreen() {
+                introScreen.style.opacity = '0';
+                introScreen.style.transition = 'opacity 0.5s ease-out';
+                setTimeout(() => {
+                    introScreen.style.display = 'none';
+                    profiles.forEach(p => p.classList.add('pop-in'));
+                    document.getElementById('intro-video').src = ''; // Clear source to save bandwidth
+                }, 500);
+            }
+
+            // Since an iframe cannot fire a natural "ended" event, we use a timeout.
+            // The Netflix intro video is exactly 4 seconds long.
+            setTimeout(hideIntroScreen, 4500);
+            introScreen.addEventListener('click', hideIntroScreen);
+        });
+        
+        window.addEventListener('resize', checkScrollIndicators);
+    </script>
+</body>
+</html>
