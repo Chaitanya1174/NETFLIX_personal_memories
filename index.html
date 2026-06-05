@@ -397,7 +397,10 @@
         <div class="navbar">
             <div class="logo">NETFLIX</div>
             <div class="nav-actions">
-                <span id="current-user-display" style="font-weight: bold;"></span>
+                <!-- <span id="current-user-display" style="font-weight: bold;"></span> -->
+                <span id="current-user-display" style="font-weight: bold;">
+                    <a href="https://docs.google.com/spreadsheets/d/1j9h3cihQFuipuFZx0wu096OVN2WBN11SSoyOu9MwDRs/edit?usp=sharing" style="text-decoration: none; color: inherit;">Edit</a>
+                </span>
                 <span class="switch-profile-btn" onclick="logout()">Switch Profile</span>
             </div>
         </div>
@@ -623,8 +626,19 @@
 
         function enterDashboard(username) {
             currentUser = username;
-            document.getElementById('current-user-display').textContent = username + "'s Profile";
-            
+            const userDisplay = document.getElementById('current-user-display');
+
+            // Set the text
+            userDisplay.textContent = username + "'s Profile";
+
+            // Make it look clickable
+            userDisplay.style.cursor = 'pointer'; 
+
+            // Add the click event to open the link in a new tab
+            userDisplay.onclick = function() {
+                window.open('https://docs.google.com/spreadsheets/d/1j9h3cihQFuipuFZx0wu096OVN2WBN11SSoyOu9MwDRs/edit?usp=sharing', '_blank');
+            };
+
             ['sonu', 'aadu', 'us'].forEach(user => {
                 document.getElementById(user + '-content').style.display = 'none';
             });
