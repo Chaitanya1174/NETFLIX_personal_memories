@@ -243,6 +243,13 @@
             white-space: nowrap;
         }
 
+        .thumbnail-timestamp {
+            font-size: 0.75rem;
+            color: #b0b0b0;
+            margin-top: 4px;
+            font-weight: normal;
+        }
+
         .thumbnail:hover {
             transform: scale(1.08);
             z-index: 10;
@@ -441,12 +448,18 @@
     </div>
 
     <script>
-        // -------------------------------------------------------------
-        // IMPORTANT: PASTE YOUR GOOGLE SHEET CSV LINK HERE!
-        // Format should be "https://docs.google.com/spreadsheets/d/YOUR_ID/pub?output=csv"
-        // -------------------------------------------------------------
-        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRwziuMgMsgWM8ChqqBNnIqMPFJpUauQKUOY72c9zwxKvJUTNtC1EItgOLFGWEVHF8bWZRjwwPAl08b/pub?output=csv"; 
-
+            // The password you want to use
+        const sitePassword = "ourmovienight"; 
+        
+        let userAttempt = prompt("Please enter the password to view this site:");
+        
+        if (userAttempt !== sitePassword) {
+            // If wrong, replace the whole page with a message
+            document.write("<h1 style='color:white; text-align:center; margin-top:20%; font-family:sans-serif;'>Access Denied. Wrong Password! 🎬</h1>");
+            // Stop the rest of the site from loading
+            window.stop(); 
+        }
+        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSN0hwtG03xooT01pV-e0boWjSNVd93hhKXLX8Gx8Ygs1gbYiTQXwvLY3EOYqEw4oCowzBs8YBCP2VO/pub?gid=2084822117&single=true&output=csv"; 
 
         const profileScreen = document.getElementById('profile-screen');
         const browseScreen = document.getElementById('browse-screen');
@@ -457,7 +470,7 @@
         let currentUser = null;
         let pendingYouTubeUrl = null;
         let isPlayingVideoIntro = false;
-        let playbackTimeout = null; // To track and cancel timeouts if user hits 'Back' early
+        let playbackTimeout = null; 
 
         function getCleanYouTubeEmbed(url) {
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -477,25 +490,11 @@
             return 'https://images.unsplash.com/photo-1506744626753-eda8183248c8?w=500';
         }
 
-        // Fetch Data from Google Sheets and group by category
-        // async function fetchVideosFromSheet(username) {
-        //     if (!SHEET_CSV_URL) return; 
-            
-        //     try {
-        //         const response = await fetch(SHEET_CSV_URL);
-        //         const data = await response.text();
         async function fetchVideosFromSheet(username) {
             if (!SHEET_CSV_URL) return; 
             
             try {
-                // 1. Create a unique timestamp string
-                const timestamp = new Date().getTime();
-                
-                // 2. Append it to the URL. (Using '&' because your URL already has a '?')
-                const cacheBustedUrl = `${SHEET_CSV_URL}&_=${timestamp}`;
-                
-                // 3. Force the browser to ignore its local cache completely
-                const response = await fetch(cacheBustedUrl, { cache: 'no-store' });
+                const response = await fetch(SHEET_CSV_URL);
                 const data = await response.text();
                 
                 const rows = data.split('\n').slice(1);
@@ -513,20 +512,21 @@
                     const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(col => col.replace(/^"|"$/g, '').trim());
                     
                     if (cols.length >= 4) {
-                        const profile = cols[0];
-                        const title = cols[1];
+                        const timestamp = cols[0] || ""; 
+                        const profile = cols[1];
+                        const title = cols[2];
                         const video = cols[3];
                         
                         const category = (cols.length >= 5 && cols[4]) ? cols[4] : "Recently Added"; 
                         const thumb = getYouTubeThumbnail(video);
                         
-                        if (profile.toLowerCase() === username.toLowerCase() || profile.toLowerCase() === 'all') {
-                            allUserVideos.push({ title, url: video, desc: category });
+                        if (profile && (profile.toLowerCase() === username.toLowerCase() || profile.toLowerCase() === 'all')) {
+                            allUserVideos.push({ title, url: video, desc: category, timestamp });
 
                             if (!categories[category]) {
                                 categories[category] = [];
                             }
-                            categories[category].push({ title, thumb, video });
+                            categories[category].push({ title, thumb, video, timestamp });
                         }
                     }
                 });
@@ -567,7 +567,10 @@
 
                         thumbDiv.innerHTML = `
                             <img src="${vid.thumb}" alt="${vid.title}">
-                            <div class="thumbnail-title">${vid.title}</div>
+                            <div class="thumbnail-title">
+                                ${vid.title}
+                                ${vid.timestamp ? `<div class="thumbnail-timestamp">Added: ${vid.timestamp}</div>` : ''}
+                            </div>
                         `;
                         videoRow.appendChild(thumbDiv);
                     });
@@ -658,16 +661,14 @@
             ytIframe.className = '';
             ytIframe.src = ""; 
             
-            // Set the URL with autoplay to trigger the intro
             introPlayback.src = "https://www.youtube.com/embed/GV3HUDMQ-F8?autoplay=1&mute=1&controls=0&disablekb=1&fs=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1";
             
-            // The video is 4 seconds long. We swap out the frames exactly at 4.5 seconds.
             playbackTimeout = setTimeout(() => {
                 if (isPlayingVideoIntro && pendingYouTubeUrl) {
                     isPlayingVideoIntro = false;
                     
                     introPlayback.style.display = 'none';
-                    introPlayback.src = ""; // Stops the intro video from playing in background
+                    introPlayback.src = ""; 
                     
                     ytIframe.style.display = 'block';
                     ytIframe.classList.add('video-fade-in');
@@ -677,7 +678,7 @@
         }
 
         function closeVideo() {
-            clearTimeout(playbackTimeout); // Prevent main video from loading if backed out early
+            clearTimeout(playbackTimeout); 
             isPlayingVideoIntro = false;
             pendingYouTubeUrl = null;
             
@@ -710,12 +711,10 @@
                 setTimeout(() => {
                     introScreen.style.display = 'none';
                     profiles.forEach(p => p.classList.add('pop-in'));
-                    document.getElementById('intro-video').src = ''; // Clear source to save bandwidth
+                    document.getElementById('intro-video').src = ''; 
                 }, 500);
             }
 
-            // Since an iframe cannot fire a natural "ended" event, we use a timeout.
-            // The Netflix intro video is exactly 4 seconds long.
             setTimeout(hideIntroScreen, 4500);
             introScreen.addEventListener('click', hideIntroScreen);
         });
