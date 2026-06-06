@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse - Me and Aadu on Netflix</title>
+    <link rel="icon" href="https://assets.nflxext.com/us/ffe/siteui/common/icons/nficon2016.ico">
+    <style>
+        body { margin: 0; padding: 0; background-color: #141414; color: white; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; overflow-x: hidden; }
+        h1, h2 { font-weight: normal; }
+
+        /* NAVBAR */
+        #browse-screen { padding: 20px 40px; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; position: relative; z-index: 30; }
+        .logo { color: #E50914; font-size: 2rem; font-weight: bold; cursor: pointer; }
+        .nav-actions { display: flex; align-items: center; gap: 20px; }
+        .switch-profile-btn { cursor: pointer; color: #b0b0b0; transition: color 0.3s; }
+        .switch-profile-btn:hover { color: white; }
+
+        /* FEATURED SECTION */
+        .featured-section { position: relative; width: 100vw; height: 75vh; min-height: 500px; margin: -20px -40px 0 -40px; overflow: hidden; background-color: #000; }
+        .featured-section::after { content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 250px; background: linear-gradient(to top, #141414 0%, transparent 100%); z-index: 5; pointer-events: none; }
+        .featured-video { position: absolute; top: 50%; left: 50%; width: 100vw; height: 56.25vw; min-height: 100%; min-width: 177.77vh; transform: translate(-50%, -50%) scale(1.15); pointer-events: none; filter: brightness(0.6); border: none; }
+        .featured-content { position: absolute; bottom: 150px; left: 40px; right: 40px; color: white; z-index: 10; }
+        .featured-title { font-size: 3.5rem; font-weight: bold; margin: 0 0 20px 0; text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8); }
+        .featured-description { font-size: 1.2rem; margin: 0 0 30px 0; max-width: 500px; text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8); }
+        .watch-now-btn { background-color: white; color: black; border: none; padding: 12px 40px; font-size: 1.1rem; font-weight: bold; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease; display: none;}
+        .watch-now-btn:hover { background-color: #e6e6e6; }
+
+        /* ROWS */
+        .rows-wrapper { position: relative; z-index: 20; margin-top: -100px; }
+        .row-title { font-size: 1.4rem; margin-bottom: 10px; padding-left: 20px; text-transform: capitalize; text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8); }
+        .video-row { display: flex; gap: 15px; overflow-x: auto; padding: 20px; padding-bottom: 40px; scroll-behavior: smooth; }
+        .video-row::-webkit-scrollbar { display: none; }
+        .row-container { position: relative; margin-bottom: 20px; }
+        .thumbnail { min-width: 250px; height: 140px; cursor: pointer; border-radius: 4px; transition: transform 0.3s ease; position: relative; background-color: #222; }
+        .thumbnail img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+        .thumbnail-title { position: absolute; bottom: 0; left: 0; right: 0; padding: 30px 10px 10px 10px; background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 100%); color: white; font-size: 0.9rem; font-weight: 500; border-radius: 0 0 4px 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .thumbnail-timestamp { font-size: 0.75rem; color: #b0b0b0; margin-top: 4px; font-weight: normal; }
+        .thumbnail:hover { transform: scale(1.08); z-index: 10; }
+        .scroll-indicator { display: none; position: absolute; right: 0px; top: 45%; transform: translateY(-50%); background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.7) 100%); padding: 60px 10px; border-radius: 4px; color: #b0b0b0; font-size: 1.5rem; font-weight: bold; white-space: nowrap; z-index: 15; cursor: pointer; transition: color 0.3s ease; }
+        .scroll-indicator:hover { color: white; }
+        .scroll-indicator.show { display: block; }
+
+        /* PLAYER SCREEN */
+        #player-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: black; z-index: 100; overflow: hidden; }
+        .back-btn { position: absolute; top: 20px; left: 20px; color: white; font-size: 1.2rem; cursor: pointer; z-index: 101; background: rgba(0, 0, 0, 0.5); padding: 10px 20px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); transition: background 0.3s; }
+        .back-btn:hover { background: rgba(229, 9, 20, 0.8); border-color: transparent; }
+        #intro-playback { width: 100vw; height: 100vh; border: none; pointer-events: none; transform: scale(1.3); opacity: 0; animation: delayedFadeIn 0.5s ease-in forwards 0.8s; }
+        #yt-iframe { width: 100%; height: 100%; border: none; display: none; background: black; }
+        .video-fade-in { animation: fadeIn 1s ease-in forwards; }
+        
+        @keyframes delayedFadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div id="browse-screen">
+        <div class="navbar">
+            <div class="logo">NETFLIX</div>
+            <div class="nav-actions">
+                <span id="current-user-display" style="font-weight: bold; cursor: pointer;">
+                    <a href="https://docs.google.com/spreadsheets/d/1j9h3cihQFuipuFZx0wu096OVN2WBN11SSoyOu9MwDRs/edit?usp=sharing" target="_blank" style="text-decoration: none; color: inherit;">Edit</a>
+                </span>
+                <span class="switch-profile-btn" onclick="logout()">Switch Profile</span>
+            </div>
+        </div>
+
+        <div id="user-content">
+            <div class="featured-section" id="user-featured">
+                <iframe class="featured-video" id="user-featured-video" frameborder="0" allow="autoplay; encrypted-media" mute="1"></iframe>
+                <div class="featured-content">
+                    <div class="featured-title" id="user-featured-title">Featured Video</div>
+                    <div class="featured-description" id="user-featured-desc">Watch this amazing video</div>
+                    <button class="watch-now-btn" id="user-watch-btn" onclick="playFeaturedVideo()">▶ Play</button>
+                </div>
+            </div>
+            <div id="user-rows-container" class="rows-wrapper"></div>
+        </div>
+    </div>
+
+    <div id="player-screen">
+        <button class="back-btn" onclick="closeVideo()">← Back</button>
+        <iframe id="intro-playback" allow="autoplay; encrypted-media"></iframe>
+        <iframe id="yt-iframe" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
+    </div>
+
+    <script>
+        // Security checks
+        if (sessionStorage.getItem('authenticated') !== 'true') window.location.href = 'index.html';
+        
+        const currentUser = localStorage.getItem('currentUser');
+        if (!currentUser) window.location.href = 'profiles.html';
+
+        document.getElementById('current-user-display').innerHTML = `<a href="https://docs.google.com/spreadsheets/d/1j9h3cihQFuipuFZx0wu096OVN2WBN11SSoyOu9MwDRs/edit?usp=sharing" target="_blank" style="text-decoration: none; color: inherit;">${currentUser}'s Profile (Edit List)</a>`;
+
+        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSN0hwtG03xooT01pV-e0boWjSNVd93hhKXLX8Gx8Ygs1gbYiTQXwvLY3EOYqEw4oCowzBs8YBCP2VO/pub?gid=2084822117&single=true&output=csv"; 
+
+        const browseScreen = document.getElementById('browse-screen');
+        const playerScreen = document.getElementById('player-screen');
+        const introPlayback = document.getElementById('intro-playback');
+        const ytIframe = document.getElementById('yt-iframe');
+        
+        let pendingYouTubeUrl = null;
+        let isPlayingVideoIntro = false;
+        let playbackTimeout = null; 
+
+        function getCleanYouTubeEmbed(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = url.match(regExp);
+            if (match && match[2].length === 11) return `https://www.youtube.com/embed/${match[2]}?autoplay=1&modestbranding=1&rel=0&playsinline=1`;
+            return url;
+        }
+
+        function getYouTubeThumbnail(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = url.match(regExp);
+            if (match && match[2].length === 11) return `https://img.youtube.com/vi/${match[2]}/hqdefault.jpg`;
+            return 'https://images.unsplash.com/photo-1506744626753-eda8183248c8?w=500';
+        }
+
+        async function fetchVideosFromSheet() {
+            if (!SHEET_CSV_URL) return; 
+            try {
+                const response = await fetch(SHEET_CSV_URL);
+                const data = await response.text();
+                const rows = data.split('\n').slice(1);
+                const container = document.getElementById('user-rows-container');
+                container.innerHTML = ''; 
+                
+                const categories = {};
+                const allUserVideos = [];
+
+                [...rows].reverse().forEach(row => {
+                    if (!row.trim()) return;
+                    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(col => col.replace(/^"|"$/g, '').trim());
+                    
+                    if (cols.length >= 4) {
+                        const timestamp = cols[0] || ""; 
+                        const profile = cols[1];
+                        const title = cols[2];
+                        const video = cols[3];
+                        const category = (cols.length >= 5 && cols[4]) ? cols[4] : "Recently Added"; 
+                        const thumb = getYouTubeThumbnail(video);
+                        
+                        if (profile && (profile.toLowerCase() === currentUser.toLowerCase() || profile.toLowerCase() === 'all')) {
+                            allUserVideos.push({ title, url: video, desc: category, timestamp });
+                            if (!categories[category]) categories[category] = [];
+                            categories[category].push({ title, thumb, video, timestamp });
+                        }
+                    }
+                });
+
+                if (allUserVideos.length > 0) {
+                    const randomVideo = allUserVideos[Math.floor(Math.random() * allUserVideos.length)];
+                    setFeaturedVideo(randomVideo);
+                }
+                
+                for (const [categoryName, videos] of Object.entries(categories)) {
+                    const titleH2 = document.createElement('h2');
+                    titleH2.className = 'row-title';
+                    titleH2.textContent = categoryName;
+                    container.appendChild(titleH2);
+
+                    const rowContainer = document.createElement('div');
+                    rowContainer.className = 'row-container';
+
+                    const scrollIndicator = document.createElement('div');
+                    scrollIndicator.className = 'scroll-indicator';
+                    scrollIndicator.textContent = '→';
+                    scrollIndicator.onclick = function() { this.closest('.row-container').querySelector('.video-row').scrollBy({ left: 265, behavior: 'smooth' }); };
+                    rowContainer.appendChild(scrollIndicator);
+
+                    const videoRow = document.createElement('div');
+                    videoRow.className = 'video-row';
+
+                    videos.forEach(vid => {
+                        const thumbDiv = document.createElement('div');
+                        thumbDiv.className = 'thumbnail';
+                        thumbDiv.onclick = function() { playVideo(vid.video); };
+                        thumbDiv.innerHTML = `<img src="${vid.thumb}" alt="${vid.title}"><div class="thumbnail-title">${vid.title}${vid.timestamp ? `<div class="thumbnail-timestamp">Added: ${vid.timestamp}</div>` : ''}</div>`;
+                        videoRow.appendChild(thumbDiv);
+                    });
+
+                    rowContainer.appendChild(videoRow);
+                    container.appendChild(rowContainer);
+                }
+                setTimeout(checkScrollIndicators, 100);
+            } catch (error) {
+                console.error("Failed to load data:", error);
+            }
+        }
+
+        function setFeaturedVideo(videoObj) {
+            const iframe = document.getElementById('user-featured-video');
+            const titleEl = document.getElementById('user-featured-title');
+            const descEl = document.getElementById('user-featured-desc');
+            const watchBtn = document.getElementById('user-watch-btn');
+            
+            if (videoObj) {
+                iframe.src = getCleanYouTubeEmbed(videoObj.url) + "&mute=1&loop=1&controls=0&disablekb=1";
+                titleEl.textContent = videoObj.title;
+                descEl.textContent = "From Category: " + videoObj.desc;
+                iframe.setAttribute('data-rawUrl', videoObj.url);
+                watchBtn.style.display = 'inline-block';
+            }
+        }
+        
+        function playFeaturedVideo() {
+            const iframe = document.getElementById('user-featured-video');
+            if (iframe.hasAttribute('data-rawUrl')) playVideo(iframe.getAttribute('data-rawUrl'));
+        }
+
+        function playVideo(rawUrl) {
+            browseScreen.style.display = 'none';
+            playerScreen.style.display = 'block';
+            
+            pendingYouTubeUrl = getCleanYouTubeEmbed(rawUrl);
+            isPlayingVideoIntro = true;
+            
+            introPlayback.style.display = 'block';
+            ytIframe.style.display = 'none';
+            ytIframe.src = ""; 
+            
+            introPlayback.src = "https://www.youtube.com/embed/GV3HUDMQ-F8?autoplay=1&mute=1&controls=0&disablekb=1&fs=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1";
+            
+            playbackTimeout = setTimeout(() => {
+                if (isPlayingVideoIntro && pendingYouTubeUrl) {
+                    isPlayingVideoIntro = false;
+                    introPlayback.style.display = 'none';
+                    introPlayback.src = ""; 
+                    ytIframe.style.display = 'block';
+                    ytIframe.classList.add('video-fade-in');
+                    ytIframe.src = pendingYouTubeUrl;
+                }
+            }, 4500); 
+        }
+
+        function closeVideo() {
+            clearTimeout(playbackTimeout); 
+            isPlayingVideoIntro = false;
+            pendingYouTubeUrl = null;
+            introPlayback.src = ""; 
+            ytIframe.src = ""; 
+            ytIframe.style.display = 'none';
+            playerScreen.style.display = 'none';
+            browseScreen.style.display = 'block';
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'profiles.html';
+        }
+
+        function checkScrollIndicators() {
+            document.querySelectorAll('.row-container').forEach(container => {
+                const videoRow = container.querySelector('.video-row');
+                const scrollIndicator = container.querySelector('.scroll-indicator');
+                if(scrollIndicator && videoRow) {
+                    if (videoRow.scrollWidth > videoRow.clientWidth) scrollIndicator.classList.add('show');
+                    else scrollIndicator.classList.remove('show');
+                }
+            });
+        }
+
+        window.addEventListener('resize', checkScrollIndicators);
+        
+        // Start fetching data for the logged-in user immediately
+        fetchVideosFromSheet();
+    </script>
+</body>
+</html>
