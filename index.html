@@ -45,16 +45,24 @@
             max-width: 314px;
         }
 
+        .custom-heading {
+            color: #E50914;
+            font-size: 10rem;
+            font-weight: bold;
+            margin: 0;
+            text-align: center;
+        }
+
         .password-container .logo {
             color: #E50914;
             font-size: 4.5rem;
             font-weight: bold;
-            margin: 0 0 0 0;
+            margin: 0;
             text-align: center;
         }
 
         .password-container h2 {
-            margin: 10px 0 10px 0;
+            margin: 10px 0;
             font-size: 1rem;
             font-weight: bold;
         }
@@ -380,7 +388,6 @@
             width: 100%; height: 100%;
             background-color: black;
             z-index: 100;
-            overflow: hidden; /* Hide scaled iframe edges */
         }
 
         .back-btn {
@@ -402,23 +409,15 @@
             border-color: transparent;
         }
 
-        /* STYLES FOR CLEAN YOUTUBE BACKGROUND TRICK */
+        /* LOCAL VIDEO BACKGROUNDS */
         #intro-video, #intro-playback { 
             width: 100vw; 
             height: 100vh; 
             border: none;
-            pointer-events: none; /* Prevents clicking or hovering to show UI */
-            transform: scale(1.3); /* Zooms in slightly to hide YouTube title/logo edges */
-            
-            /* NEW: Delay fade trick to hide YouTube play button */
+            pointer-events: none; 
+            object-fit: cover; 
             opacity: 0; 
-            animation: delayedFadeIn 0.5s ease-in forwards 0.8s;
-        }
-
-        /* NEW: Keyframes for the delay fade */
-        @keyframes delayedFadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            animation: fadeIn 0.5s ease-in forwards 0.8s;
         }
 
         #yt-iframe {
@@ -444,7 +443,6 @@
             background-color: #000;
             position: fixed; top: 0; left: 0;
             z-index: 1000;
-            overflow: hidden; /* Hide scaled iframe edges */
         }
 
         @keyframes popIn {
@@ -459,12 +457,15 @@
 
     <div id="password-screen">
         <div class="password-container">
+            <!-- <h2 class="custom-heading">Sonu & Aadu On</h2> -->
             
-            <h2 style=" color: #E50914;
+            <h2 
+            style="color: #E50914;
             font-size: 2rem;
             font-weight: bold;
-            margin: 0 0 0 0;
-            text-align: center; ">Sonu & Aadu On</h2>
+            margin: 0;
+            text-align: center;"
+            >Sonu & Aadu On</h2>
 
             <h1 class="logo">NETFLIX</h1>
             <p>Please enter the password to get started.</p>
@@ -476,22 +477,22 @@
     </div>
 
     <div id="intro-screen">
-        <iframe id="intro-video" src="" allow="autoplay; encrypted-media"></iframe>
+        <video id="intro-video" muted playsinline></video>
     </div>
 
     <div id="profile-screen">
         <h1>Who's watching?</h1>
         <div class="profiles-container">
             <div class="profile" onclick="enterDashboard('Sonu')">
-                <img class="profile-img" src="https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.jpg" alt="Sonu">
+                <img class="profile-img" src="media/Sonu.jpg" alt="Sonu">
                 <div class="profile-name">Sonu</div>
             </div>
             <div class="profile" onclick="enterDashboard('Aadu')" style="animation-delay: 0.2s;">
-                <img class="profile-img" src="https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-88wkdmjrorckekha.jpg" alt="Aadu">
+                <img class="profile-img" src="media/Aadu.jpg" alt="Aadu">
                 <div class="profile-name">Aadu</div>
             </div>
             <div class="profile" onclick="enterDashboard('US')" style="animation-delay: 0.4s;">
-                <img class="profile-img" src="https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-88wkdmjrorckekha.jpg" alt="US">
+                <img class="profile-img" src="media/US.jpg" alt="US">
                 <div class="profile-name">US</div>
             </div>
         </div>
@@ -510,7 +511,7 @@
 
         <div id="sonu-content" style="display: none;">
             <div class="featured-section" id="sonu-featured">
-                <iframe class="featured-video" id="sonu-featured-video" frameborder="0" allow="autoplay; encrypted-media" mute="1"></iframe>
+                <iframe class="featured-video" id="sonu-featured-video" allow="autoplay; encrypted-media"></iframe>
                 <div class="featured-content">
                     <div class="featured-title" id="sonu-featured-title">Featured Video</div>
                     <div class="featured-description" id="sonu-featured-desc">Watch this amazing video</div>
@@ -522,7 +523,7 @@
 
         <div id="aadu-content" style="display: none;">
             <div class="featured-section" id="aadu-featured">
-                <iframe class="featured-video" id="aadu-featured-video" frameborder="0" allow="autoplay; encrypted-media" mute="1"></iframe>
+                <iframe class="featured-video" id="aadu-featured-video" allow="autoplay; encrypted-media"></iframe>
                 <div class="featured-content">
                     <div class="featured-title" id="aadu-featured-title">Featured Video</div>
                     <div class="featured-description" id="aadu-featured-desc">Watch this amazing video</div>
@@ -534,7 +535,7 @@
 
         <div id="us-content" style="display: none;">
             <div class="featured-section" id="us-featured">
-                <iframe class="featured-video" id="us-featured-video" frameborder="0" allow="autoplay; encrypted-media" mute="1"></iframe>
+                <iframe class="featured-video" id="us-featured-video" allow="autoplay; encrypted-media"></iframe>
                 <div class="featured-content">
                     <div class="featured-title" id="us-featured-title">Featured Video</div>
                     <div class="featured-description" id="us-featured-desc">Watch this amazing video</div>
@@ -547,9 +548,7 @@
 
     <div id="player-screen">
         <button class="back-btn" onclick="closeVideo()">← Back</button>
-        
-        <iframe id="intro-playback" allow="autoplay; encrypted-media"></iframe>
-
+        <video id="intro-playback" muted playsinline></video>
         <iframe id="yt-iframe" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
     </div>
 
@@ -558,23 +557,16 @@
 
         function checkPassword() {
             const input = document.getElementById('site-password-input').value;
-            const errorMsg = document.getElementById('password-error');
-            
             if (input === sitePassword) {
-                // Correct password: Hide login, start the intro
                 document.getElementById('password-screen').style.display = 'none';
                 startIntro(); 
             } else {
-                // Wrong password: Show error
-                errorMsg.style.display = 'block';
+                document.getElementById('password-error').style.display = 'block';
             }
         }
 
-        // Allow pressing the "Enter" key on the keyboard to submit
         document.getElementById('site-password-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkPassword();
-            }
+            if (e.key === 'Enter') checkPassword();
         });
 
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSN0hwtG03xooT01pV-e0boWjSNVd93hhKXLX8Gx8Ygs1gbYiTQXwvLY3EOYqEw4oCowzBs8YBCP2VO/pub?gid=2084822117&single=true&output=csv"; 
@@ -585,7 +577,6 @@
         const introPlayback = document.getElementById('intro-playback');
         const ytIframe = document.getElementById('yt-iframe');
         
-        let currentUser = null;
         let pendingYouTubeUrl = null;
         let isPlayingVideoIntro = false;
         let playbackTimeout = null; 
@@ -614,13 +605,11 @@
             try {
                 const response = await fetch(SHEET_CSV_URL);
                 const data = await response.text();
-                
                 const rows = data.split('\n').slice(1);
                 const prefix = username.toLowerCase();
                 const container = document.getElementById(prefix + '-rows-container');
                 
                 container.innerHTML = ''; 
-                
                 const categories = {};
                 const allUserVideos = [];
 
@@ -634,16 +623,12 @@
                         const profile = cols[1];
                         const title = cols[2];
                         const video = cols[3];
-                        
                         const category = (cols.length >= 5 && cols[4]) ? cols[4] : "Recently Added"; 
                         const thumb = getYouTubeThumbnail(video);
                         
                         if (profile && (profile.toLowerCase() === username.toLowerCase() || profile.toLowerCase() === 'all')) {
                             allUserVideos.push({ title, url: video, desc: category, timestamp });
-
-                            if (!categories[category]) {
-                                categories[category] = [];
-                            }
+                            if (!categories[category]) categories[category] = [];
                             categories[category].push({ title, thumb, video, timestamp });
                         }
                     }
@@ -668,11 +653,9 @@
                     const scrollIndicator = document.createElement('div');
                     scrollIndicator.className = 'scroll-indicator';
                     scrollIndicator.textContent = '→';
-                    
                     scrollIndicator.onclick = function() {
                         this.closest('.row-container').querySelector('.video-row').scrollBy({ left: 265, behavior: 'smooth' });
                     };
-                    
                     rowContainer.appendChild(scrollIndicator);
 
                     const videoRow = document.createElement('div');
@@ -696,26 +679,21 @@
                     rowContainer.appendChild(videoRow);
                     container.appendChild(rowContainer);
                 }
-                
                 setTimeout(checkScrollIndicators, 100);
-
             } catch (error) {
-                console.error("Failed to load data from Google Sheets:", error);
+                console.error("Failed to load data:", error);
             }
         }
 
         function setFeaturedVideo(username, videoObj) {
             const prefix = username.toLowerCase();
-            
             const iframe = document.getElementById(prefix + '-featured-video');
             const titleEl = document.getElementById(prefix + '-featured-title');
             const descEl = document.getElementById(prefix + '-featured-desc');
             const watchBtn = document.querySelector('#' + prefix + '-content .watch-now-btn');
             
             if (videoObj) {
-                const embedUrl = getCleanYouTubeEmbed(videoObj.url) + "&mute=1&loop=1&controls=0&disablekb=1";
-                
-                iframe.src = embedUrl;
+                iframe.src = getCleanYouTubeEmbed(videoObj.url) + "&mute=1&loop=1&controls=0&disablekb=1";
                 iframe.style.display = 'block';
                 titleEl.textContent = videoObj.title;
                 descEl.textContent = "From Category: " + videoObj.desc;
@@ -733,29 +711,20 @@
         
         function playFeaturedVideo(username) {
             const iframe = document.getElementById(username.toLowerCase() + '-featured-video');
-            if (iframe.hasAttribute('data-rawUrl')) {
-                const videoUrl = iframe.getAttribute('data-rawUrl');
-                playVideo(videoUrl);
-            }
+            if (iframe.hasAttribute('data-rawUrl')) playVideo(iframe.getAttribute('data-rawUrl'));
         }
 
         function enterDashboard(username) {
-            currentUser = username;
             const userDisplay = document.getElementById('current-user-display');
-
             userDisplay.textContent = username + "'s Profile";
             userDisplay.style.cursor = 'pointer'; 
-
-            userDisplay.onclick = function() {
-                window.open('https://docs.google.com/spreadsheets/d/1j9h3cihQFuipuFZx0wu096OVN2WBN11SSoyOu9MwDRs/edit?usp=sharing', '_blank');
-            };
+            userDisplay.onclick = () => window.open('https://docs.google.com/spreadsheets/d/1j9h3cihQFuipuFZx0wu096OVN2WBN11SSoyOu9MwDRs/edit?usp=sharing', '_blank');
 
             ['sonu', 'aadu', 'us'].forEach(user => {
                 document.getElementById(user + '-content').style.display = 'none';
             });
             
             document.getElementById(username.toLowerCase() + '-content').style.display = 'block';
-            
             fetchVideosFromSheet(username);
             
             profileScreen.style.display = 'none';
@@ -763,13 +732,9 @@
         }
 
         function logout() {
-            currentUser = null;
             browseScreen.style.display = 'none';
             profileScreen.style.display = 'flex';
-            
-            document.querySelectorAll('.featured-video').forEach(iframe => {
-                iframe.src = '';
-            });
+            document.querySelectorAll('.featured-video').forEach(iframe => iframe.src = '');
         }
 
         function playVideo(rawUrl) {
@@ -786,12 +751,12 @@
             ytIframe.className = '';
             ytIframe.src = ""; 
             
-            introPlayback.src = "https://www.youtube.com/embed/GV3HUDMQ-F8?autoplay=1&mute=1&controls=0&disablekb=1&fs=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1";
+            introPlayback.src = "media/netflixIntro.mp4";
+            introPlayback.play(); 
             
             playbackTimeout = setTimeout(() => {
                 if (isPlayingVideoIntro && pendingYouTubeUrl) {
                     isPlayingVideoIntro = false;
-                    
                     introPlayback.style.display = 'none';
                     introPlayback.src = ""; 
                     
@@ -807,7 +772,9 @@
             isPlayingVideoIntro = false;
             pendingYouTubeUrl = null;
             
-            introPlayback.src = ""; 
+            introPlayback.pause(); 
+            introPlayback.currentTime = 0; 
+            
             ytIframe.src = ""; 
             ytIframe.style.display = 'none';
             
@@ -828,14 +795,13 @@
 
         window.addEventListener('resize', checkScrollIndicators);
 
-        // We wrap the intro logic in a function so it only runs AFTER login
         function startIntro() {
             const introScreen = document.getElementById('intro-screen');
             const introVideo = document.getElementById('intro-video');
             const profiles = document.querySelectorAll('.profile');
 
-            // Inject the YouTube URL now that the user is logged in
-            introVideo.src = "https://www.youtube.com/embed/GV3HUDMQ-F8?autoplay=1&mute=1&controls=0&disablekb=1&fs=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1";
+            introVideo.src = "media/netflixIntro.mp4";
+            introVideo.play().catch(e => console.log("Autoplay prevented:", e));
 
             function hideIntroScreen() {
                 introScreen.style.opacity = '0';
@@ -843,11 +809,11 @@
                 setTimeout(() => {
                     introScreen.style.display = 'none';
                     profiles.forEach(p => p.classList.add('pop-in'));
-                    introVideo.src = ''; 
+                    introVideo.pause(); 
+                    introVideo.currentTime = 0; 
                 }, 500);
             }
 
-            // Hide intro after 4.5 seconds
             setTimeout(hideIntroScreen, 4500);
             introScreen.addEventListener('click', hideIntroScreen);
         }
