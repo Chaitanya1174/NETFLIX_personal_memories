@@ -142,6 +142,19 @@
             filter: brightness(0.6);
             pointer-events: none;
         }
+        .featured-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100vw;
+            height: 56.25vw; /* Forces a 16:9 aspect ratio (9/16 = 0.5625) */
+            min-height: 100%;
+            min-width: 177.77vh; /* Ensures it never gets too narrow for the container height */
+            transform: translate(-50%, -50%) scale(1.15); /* Centers the video and scales up slightly to hide YouTube UI edges */
+            pointer-events: none;
+            filter: brightness(0.6);
+            border: none;
+        }
 
         .featured-content {
             position: absolute;
@@ -153,7 +166,7 @@
         }
 
         .featured-title {
-            font-size: 3.5rem;
+            font-size: 2.5rem;
             font-weight: bold;
             margin: 0 0 20px 0;
             text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
