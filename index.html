@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Me and Aadu on Netflix</title>
+    <title>Sonu & Aadu on Netflix</title>
     <link rel="icon" href="https://assets.nflxext.com/us/ffe/siteui/common/icons/nficon2016.ico">
     <style>
         /* --- GLOBAL STYLES --- */
@@ -18,6 +18,89 @@
 
         h1, h2 {
             font-weight: normal;
+        }
+
+        /* --- SCREEN: PASSWORD LOGIN --- */
+        #password-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100vw;
+            background-color: rgba(0, 0, 0, 0.9);
+            background-image: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.8) 100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 2000;
+        }
+
+        .password-container {
+            background-color: rgba(0, 0, 0, 0.75);
+            padding: 60px 68px 40px;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 314px;
+        }
+
+        .password-container .logo {
+            color: #E50914;
+            font-size: 4.5rem;
+            font-weight: bold;
+            margin: 0 0 0 0;
+            text-align: center;
+        }
+
+        .password-container h2 {
+            margin: 10px 0 10px 0;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .password-container p {
+            color: #8c8c8c;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        .password-container input {
+            background: #333;
+            border: none;
+            border-radius: 4px;
+            padding: 16px 20px;
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            outline: none;
+        }
+
+        .password-container input:focus {
+            background: #454545;
+        }
+
+        .password-container button {
+            background: #E50914;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 16px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .password-container button:hover {
+            background: #f40612;
+        }
+
+        #password-error {
+            color: #E50914;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: none;
         }
 
         /* --- SCREEN: WHO'S WATCHING --- */
@@ -134,13 +217,16 @@
 
         .featured-video {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: brightness(0.6);
+            top: 50%;
+            left: 50%;
+            width: 100vw;
+            height: 56.25vw;
+            min-height: 100%;
+            min-width: 177.77vh;
+            transform: translate(-50%, -50%) scale(1.15);
             pointer-events: none;
+            filter: brightness(0.6);
+            border: none;
         }
 
         .featured-content {
@@ -153,7 +239,7 @@
         }
 
         .featured-title {
-            font-size: 3.5rem;
+            font-size: 2.5rem;
             font-weight: bold;
             margin: 0 0 20px 0;
             text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
@@ -371,8 +457,26 @@
 </head>
 <body>
 
+    <div id="password-screen">
+        <div class="password-container">
+            
+            <h2 style=" color: #E50914;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0 0 0 0;
+            text-align: center; ">Sonu & Aadu On</h2>
+
+            <h1 class="logo">NETFLIX</h1>
+            <p>Please enter the password to get started.</p>
+            <input type="password" id="site-password-input" placeholder="Password">
+            <button onclick="checkPassword()">Sign In</button>
+            <h2>*For Sonu & Aadu only..!!</h2>
+            <div id="password-error">Incorrect password. Please try again.</div>
+        </div>
+    </div>
+
     <div id="intro-screen">
-        <iframe id="intro-video" src="https://www.youtube.com/embed/GV3HUDMQ-F8?autoplay=1&mute=1&controls=0&disablekb=1&fs=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1" allow="autoplay; encrypted-media"></iframe>
+        <iframe id="intro-video" src="" allow="autoplay; encrypted-media"></iframe>
     </div>
 
     <div id="profile-screen">
@@ -397,7 +501,9 @@
         <div class="navbar">
             <div class="logo">NETFLIX</div>
             <div class="nav-actions">
-                <span id="current-user-display" style="font-weight: bold;"></span>
+                <span id="current-user-display" style="font-weight: bold;">
+                    <a href="https://docs.google.com/spreadsheets/d/1j9h3cihQFuipuFZx0wu096OVN2WBN11SSoyOu9MwDRs/edit?usp=sharing" style="text-decoration: none; color: inherit;">Edit</a>
+                </span>
                 <span class="switch-profile-btn" onclick="logout()">Switch Profile</span>
             </div>
         </div>
@@ -448,17 +554,29 @@
     </div>
 
     <script>
-            // The password you want to use
         const sitePassword = "ourmovienight"; 
-        
-        let userAttempt = prompt("Please enter the password to view this site:");
-        
-        if (userAttempt !== sitePassword) {
-            // If wrong, replace the whole page with a message
-            document.write("<h1 style='color:white; text-align:center; margin-top:20%; font-family:sans-serif;'>Access Denied. Wrong Password! 🎬</h1>");
-            // Stop the rest of the site from loading
-            window.stop(); 
+
+        function checkPassword() {
+            const input = document.getElementById('site-password-input').value;
+            const errorMsg = document.getElementById('password-error');
+            
+            if (input === sitePassword) {
+                // Correct password: Hide login, start the intro
+                document.getElementById('password-screen').style.display = 'none';
+                startIntro(); 
+            } else {
+                // Wrong password: Show error
+                errorMsg.style.display = 'block';
+            }
         }
+
+        // Allow pressing the "Enter" key on the keyboard to submit
+        document.getElementById('site-password-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
         const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSN0hwtG03xooT01pV-e0boWjSNVd93hhKXLX8Gx8Ygs1gbYiTQXwvLY3EOYqEw4oCowzBs8YBCP2VO/pub?gid=2084822117&single=true&output=csv"; 
 
         const profileScreen = document.getElementById('profile-screen');
@@ -623,8 +741,15 @@
 
         function enterDashboard(username) {
             currentUser = username;
-            document.getElementById('current-user-display').textContent = username + "'s Profile";
-            
+            const userDisplay = document.getElementById('current-user-display');
+
+            userDisplay.textContent = username + "'s Profile";
+            userDisplay.style.cursor = 'pointer'; 
+
+            userDisplay.onclick = function() {
+                window.open('https://docs.google.com/spreadsheets/d/1j9h3cihQFuipuFZx0wu096OVN2WBN11SSoyOu9MwDRs/edit?usp=sharing', '_blank');
+            };
+
             ['sonu', 'aadu', 'us'].forEach(user => {
                 document.getElementById(user + '-content').style.display = 'none';
             });
@@ -701,9 +826,16 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        window.addEventListener('resize', checkScrollIndicators);
+
+        // We wrap the intro logic in a function so it only runs AFTER login
+        function startIntro() {
             const introScreen = document.getElementById('intro-screen');
+            const introVideo = document.getElementById('intro-video');
             const profiles = document.querySelectorAll('.profile');
+
+            // Inject the YouTube URL now that the user is logged in
+            introVideo.src = "https://www.youtube.com/embed/GV3HUDMQ-F8?autoplay=1&mute=1&controls=0&disablekb=1&fs=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1";
 
             function hideIntroScreen() {
                 introScreen.style.opacity = '0';
@@ -711,15 +843,14 @@
                 setTimeout(() => {
                     introScreen.style.display = 'none';
                     profiles.forEach(p => p.classList.add('pop-in'));
-                    document.getElementById('intro-video').src = ''; 
+                    introVideo.src = ''; 
                 }, 500);
             }
 
+            // Hide intro after 4.5 seconds
             setTimeout(hideIntroScreen, 4500);
             introScreen.addEventListener('click', hideIntroScreen);
-        });
-        
-        window.addEventListener('resize', checkScrollIndicators);
+        }
     </script>
 </body>
 </html>
