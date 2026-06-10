@@ -457,8 +457,6 @@
 
     <div id="password-screen">
         <div class="password-container">
-            <!-- <h2 class="custom-heading">Sonu & Aadu On</h2> -->
-            
             <h2 
             style="color: #E50914;
             font-size: 2rem;
@@ -548,7 +546,7 @@
 
     <div id="player-screen">
         <button class="back-btn" onclick="closeVideo()">← Back</button>
-        <video id="intro-playback" muted playsinline></video>
+        <video id="intro-playback" playsinline></video>
         <iframe id="yt-iframe" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
     </div>
 
@@ -582,7 +580,8 @@
         let playbackTimeout = null; 
 
         function getCleanYouTubeEmbed(url) {
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            // Updated regex to catch YouTube Shorts
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
             const match = url.match(regExp);
             if (match && match[2].length === 11) {
                 return `https://www.youtube.com/embed/${match[2]}?autoplay=1&modestbranding=1&rel=0&playsinline=1`;
@@ -591,7 +590,8 @@
         }
 
         function getYouTubeThumbnail(url) {
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            // Updated regex to catch YouTube Shorts
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
             const match = url.match(regExp);
             if (match && match[2].length === 11) {
                 return `https://img.youtube.com/vi/${match[2]}/hqdefault.jpg`;
@@ -752,6 +752,7 @@
             ytIframe.src = ""; 
             
             introPlayback.src = "media/netflixIntro.mp4";
+            introPlayback.muted = false; // Forces sound on because it's triggered by a user click
             introPlayback.play(); 
             
             playbackTimeout = setTimeout(() => {
